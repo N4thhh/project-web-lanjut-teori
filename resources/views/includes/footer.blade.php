@@ -40,10 +40,11 @@
         <div class="md:w-2/5 flex flex-col items-center">
             <h3 class="font-semibold text-lg mb-1">Layanan</h3>
             <ul class="space-y-2">
-                <li>Cuci Kering</li>
-                <li>Cuci Setrika</li>
-                <li>Cuci Lipat</li>
-                <li>Dry Cleaning</li>
+                <li>• Cuci Kering</li>
+                <li>• Cuci Setrika</li>
+                <li>• Cuci Lipat</li>
+                <li>• Dry Cleaning</li>
+                <li>• Cuci Karpet</li>
             </ul>
         </div>
         <!-- Kolom 3: Kontak -->

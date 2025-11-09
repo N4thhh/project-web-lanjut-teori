@@ -39,7 +39,7 @@
         </div>
 
         <!-- Statistik -->
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
             <div class="bg-white rounded-xl shadow flex flex-col items-center py-7">
                 <div class="bg-blue-100 p-3 rounded-full mb-2">
                     <svg class="h-6 w-6 text-primary" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
@@ -70,16 +70,6 @@
                 <div class="text-md font-semibold text-gray-700">Pesanan Selesai</div>
                 <div class="text-2xl font-bold text-gray-800 mt-1">21</div>
             </div>
-            <div class="bg-white rounded-xl shadow flex flex-col items-center py-7">
-                <div class="bg-purple-100 p-3 rounded-full mb-2">
-                    <svg class="h-6 w-6 text-purple-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                        <path d="M12 8v4l3 3"/>
-                        <circle cx="12" cy="12" r="10"/>
-                    </svg>
-                </div>
-                <div class="text-md font-semibold text-gray-700">Total Pengeluaran</div>
-                <div class="text-2xl font-bold text-purple-700 mt-1">Rp 2.450.000</div>
-            </div>
         </div>
         
         <!-- Pesanan Terbaru -->
@@ -97,10 +87,10 @@
                 <!-- Pesanan 1 -->
                 <div class="flex flex-col sm:flex-row sm:items-center justify-between p-4">
                     <div>
-                        <div class="font-semibold">Cuci Kering Premium</div>
+                        <div class="font-semibold">Cuci Kering</div>
                         <div class="text-[13px] text-gray-500 flex items-center space-x-4">
-                            <span><svg class="h-4 w-4 inline-block mr-1 align-sub" fill="none" viewBox="0 0 24 24" stroke-width="2"><path d="M8 7V3m8 4V3M3 11h18M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>2024-01-05</span>
-                            <span>Rp 65.000</span>
+                            <span><svg class="h-4 w-4 inline-block mr-1 align-sub" fill="none" viewBox="0 0 24 24" stroke-width="2"><path d="M8 7V3m8 4V3M3 11h18M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>2025-01-05</span>
+                            <span>Rp 8.000</span>
                             <span class="underline text-primary">#OK-001</span>
                         </div>
                     </div>
@@ -112,10 +102,10 @@
                 <!-- Pesanan 2 -->
                 <div class="flex flex-col sm:flex-row sm:items-center justify-between p-4">
                     <div>
-                        <div class="font-semibold">Setrika Express</div>
+                        <div class="font-semibold">Cuci Setrika</div>
                         <div class="text-[13px] text-gray-500 flex items-center space-x-4">
-                            <span><svg class="h-4 w-4 inline-block mr-1 align-sub" fill="none" viewBox="0 0 24 24" stroke-width="2"><path d="M8 7V3m8 4V3M3 11h18M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>2024-01-14</span>
-                            <span>Rp 45.000</span>
+                            <span><svg class="h-4 w-4 inline-block mr-1 align-sub" fill="none" viewBox="0 0 24 24" stroke-width="2"><path d="M8 7V3m8 4V3M3 11h18M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>2025-01-14</span>
+                            <span>Rp 12.000</span>
                             <span class="underline text-primary">#OK-002</span>
                         </div>
                     </div>
@@ -127,10 +117,10 @@
                 <!-- Pesanan 3 -->
                 <div class="flex flex-col sm:flex-row sm:items-center justify-between p-4">
                     <div>
-                        <div class="font-semibold">Dry Clean Jas</div>
+                        <div class="font-semibold">Cuci Karpet</div>
                         <div class="text-[13px] text-gray-500 flex items-center space-x-4">
-                            <span><svg class="h-4 w-4 inline-block mr-1 align-sub" fill="none" viewBox="0 0 24 24" stroke-width="2"><path d="M8 7V3m8 4V3M3 11h18M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>2024-01-03</span>
-                            <span>Rp 120.000</span>
+                            <span><svg class="h-4 w-4 inline-block mr-1 align-sub" fill="none" viewBox="0 0 24 24" stroke-width="2"><path d="M8 7V3m8 4V3M3 11h18M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>2025-01-03</span>
+                            <span>Rp 20.000</span>
                             <span class="underline text-primary">#OR-003</span>
                         </div>
                     </div>
