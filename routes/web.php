@@ -14,14 +14,12 @@ Route::get('/', function () {
     return view('home');
 })->middleware('guest');
 
-
 Route::get('/register', [AuthController::class, 'showRegisterForm'])
                 ->middleware('guest')
                 ->name('register');
 
 Route::post('/register', [AuthController::class, 'register'])
                 ->middleware('guest');
-
 
 Route::get('/login', [AuthController::class, 'showLoginForm'])
                 ->middleware('guest')
@@ -33,7 +31,6 @@ Route::post('/login', [AuthController::class, 'login'])
 Route::get('/logout', [AuthController::class, 'logout'])
                 ->middleware('auth')
                 ->name('logout');
-
 
 Route::get('/home', function() {
     if (!Auth::user()) {
@@ -54,20 +51,17 @@ Route::get('/home', function() {
     session()->regenerateToken();
     
     return redirect()->route('login')->withErrors(['email' => 'Akun Anda tidak memiliki peran yang valid.']);
-
 })->middleware('auth')->name('home');
-
 
 Route::middleware('role:admin')->prefix('admin')->name('admin.')->group(function () {
     Route::get('/dashboard', function() {
         return 'Ini Dashboard Admin';
     })->name('dashboard');
-    
 });
 
 Route::middleware('role:customer')->prefix('customer')->name('customer.')->group(function () {
     Route::get('/dashboard', function() {
-        return 'Ini Dashboard Customer';
+        // Ganti string dengan view blade
+        return view('customer.dashboard');
     })->name('dashboard');
-    
 });
