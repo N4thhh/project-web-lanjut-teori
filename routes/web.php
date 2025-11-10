@@ -15,22 +15,22 @@ Route::get('/', function () {
 })->middleware('guest');
 
 Route::get('/register', [AuthController::class, 'showRegisterForm'])
-                ->middleware('guest')
-                ->name('register');
+    ->middleware('guest')
+    ->name('register');
 
 Route::post('/register', [AuthController::class, 'register'])
-                ->middleware('guest');
+    ->middleware('guest');
 
 Route::get('/login', [AuthController::class, 'showLoginForm'])
-                ->middleware('guest')
-                ->name('login');
+    ->middleware('guest')
+    ->name('login');
 
 Route::post('/login', [AuthController::class, 'login'])
-                ->middleware('guest');
+    ->middleware('guest');
 
 Route::get('/logout', [AuthController::class, 'logout'])
-                ->middleware('auth')
-                ->name('logout');
+    ->middleware('auth')
+    ->name('logout');
 
 Route::get('/home', function() {
     if (!Auth::user()) {
@@ -53,15 +53,16 @@ Route::get('/home', function() {
     return redirect()->route('login')->withErrors(['email' => 'Akun Anda tidak memiliki peran yang valid.']);
 })->middleware('auth')->name('home');
 
+// Admin dashboard menggunakan Blade!
 Route::middleware('role:admin')->prefix('admin')->name('admin.')->group(function () {
     Route::get('/dashboard', function() {
-        return 'Ini Dashboard Admin';
+        return view('admin.dashboard');
     })->name('dashboard');
 });
 
+// Customer dashboard
 Route::middleware('role:customer')->prefix('customer')->name('customer.')->group(function () {
     Route::get('/dashboard', function() {
-        // Ganti string dengan view blade
         return view('customer.dashboard');
     })->name('dashboard');
 });
