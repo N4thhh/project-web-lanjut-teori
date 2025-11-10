@@ -61,6 +61,17 @@ Route::middleware('role:admin')->prefix('admin')->name('admin.')->group(function
         return view('admin.dashboard');
     })->name('dashboard');
 });
+Route::middleware('role:admin')->prefix('admin')->name('admin.')->group(function () {
+    Route::get('/dashboard', function() {
+        return view('admin.dashboard');
+    })->name('dashboard');
+
+    // Tambahkan baris ini:
+    Route::get('/pelanggan', function() {
+        return view('admin.pelanggan');
+    })->name('pelanggan');
+});
+
 
 // Customer dashboard
 Route::middleware('role:customer')->prefix('customer')->name('customer.')->group(function () {
