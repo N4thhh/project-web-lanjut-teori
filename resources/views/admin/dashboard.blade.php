@@ -78,12 +78,11 @@
             padding: 13px 23px;
             cursor: pointer;
             box-shadow: 0 2px 8px #1746a013;
-            background: #2196f3;
-            color: #fff;
             transition: background 0.15s, box-shadow 0.15s;
         }
         .btn-export {
             background: #2196f3;
+            color: #fff;
         }
         .btn-export:hover {
             background: #1565c0;
@@ -168,23 +167,23 @@
             background: #f6faff;
         }
         td.status {
-        text-align: left !important;
-        padding-left: 14px;
-        vertical-align: middle;
-    }
-    .status-badge {
-        display: inline-block;
-        text-align: left;
-        margin-left: 0;
-        min-width: 110px;
-        min-height: 38px;
-        padding: 10px 30px;
-        border-radius: 11px;
-        font-weight: bold;
-        font-size: 16px;
-        box-shadow: 0 2px 10px #36bffa22;
-        color: #fff;
-    }
+            text-align: left !important;
+            padding-left: 14px;
+            vertical-align: middle;
+        }
+        .status-badge {
+            display: inline-block;
+            text-align: left;
+            margin-left: 0;
+            min-width: 110px;
+            min-height: 38px;
+            padding: 10px 30px;
+            border-radius: 11px;
+            font-weight: bold;
+            font-size: 16px;
+            box-shadow: 0 2px 10px #36bffa22;
+            color: #fff;
+        }
         .diproses.status-badge {
             background: #36bffa;
         }
@@ -204,13 +203,23 @@
         <div class="dashboard-welcome">Selamat datang kembali, Admin!</div>
         
         <div class="actions-bar">
-            <button class="btn-export">
+            <button class="btn-export" id="btnExport">
                 &#128190; Export Data
             </button>
-            <button class="btn-date">
-                <svg width="18" height="18" fill="none" stroke="#2196f3" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;"><rect x="3" y="5" width="12" height="10" rx="2"/><path d="M8 3v2M12 3v2"/><path d="M3 9h12"/></svg>
-                Pilih Tanggal
-            </button>
+
+            <div class="btn-date-wrapper" style="position: relative;">
+                <button class="btn-date" id="btnDate">
+                    <svg width="18" height="18" fill="none" stroke="#2196f3" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;">
+                        <rect x="3" y="5" width="12" height="10" rx="2"/>
+                        <path d="M8 3v2M12 3v2"/>
+                        <path d="M3 9h12"/>
+                    </svg>
+                    Pilih Tanggal
+                </button>
+                <!-- input date disembunyikan tapi tetap bisa dipanggil -->
+                <input type="date" id="hiddenDateInput"
+                    style="position:absolute; opacity:0; right:0; top:0; width:140px; height:45px; cursor:pointer;">
+            </div>
         </div>
         
         <div class="stats">
@@ -227,6 +236,7 @@
                 <div class="stat-value">18</div>
             </div>
         </div>
+
         <div class="orders">
             <div class="orders-title">Pesanan Terbaru</div>
             <table>
@@ -240,40 +250,59 @@
                 <tr>
                     <td>#12345</td>
                     <td>Ahmad Rizki</td>
-                    <td>Cuci Kering Express</td>
+                    <td>Cuci Kering</td>
                     <td class="status"><span class="status-badge diproses">Diproses</span></td>
-                    <td>Rp 75.000</td>
-                </tr>
-                <tr>
-                    <td>#12344</td>
-                    <td>Siti Nurhaliza</td>
-                    <td>Setrika Premium</td>
-                    <td class="status"><span class="status-badge diproses">Diproses</span></td>
-                    <td>Rp 45.000</td>
+                    <td>Rp 8.000</td>
                 </tr>
                 <tr>
                     <td>#12343</td>
                     <td>Budi Santoso</td>
-                    <td>Cuci Lipat Regular</td>
+                    <td>Cuci Lipat</td>
                     <td class="status"><span class="status-badge selesai">Selesai</span></td>
-                    <td>Rp 65.000</td>
+                    <td>Rp 10.000</td>
                 </tr>
                 <tr>
                     <td>#12342</td>
                     <td>Maya Sari</td>
-                    <td>Dry Clean Jas</td>
+                    <td>Cuci Karpet</td>
                     <td class="status"><span class="status-badge selesai">Selesai</span></td>
-                    <td>Rp 120.000</td>
+                    <td>Rp 20.000</td>
                 </tr>
                 <tr>
                     <td>#12341</td>
                     <td>Andi Wijaya</td>
                     <td>Cuci Sepatu</td>
                     <td class="status"><span class="status-badge diproses">Diproses</span></td>
-                    <td>Rp 35.000</td>
+                    <td>Rp 15.000</td>
                 </tr>
             </table>
         </div>
     </div>
+
+    <script>
+        // Tombol Export Data
+        document.getElementById('btnExport').addEventListener('click', function() {
+            alert('🔹 Fitur export data belum diaktifkan.\nTambahkan fungsi ekspor (misalnya ke Excel atau CSV) di sini.');
+        });
+
+        // Tombol Pilih Tanggal
+        const btnDate = document.getElementById('btnDate');
+        const hiddenDateInput = document.getElementById('hiddenDateInput');
+
+        // Saat tombol diklik, buka kalender (date picker)
+        btnDate.addEventListener('click', (e) => {
+            e.preventDefault();
+            if (hiddenDateInput.showPicker) {
+                hiddenDateInput.showPicker(); // munculkan kalender (modern browser)
+            } else {
+                hiddenDateInput.focus(); // fallback
+            }
+        });
+
+        // Saat tanggal dipilih, tampilkan di tombol
+        hiddenDateInput.addEventListener('change', () => {
+            btnDate.innerHTML = `📅 ${hiddenDateInput.value}`;
+        });
+    </script>
 </body>
 </html>

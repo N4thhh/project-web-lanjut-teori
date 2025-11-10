@@ -37,16 +37,11 @@
         Layanan
       </a>
     </li>
-    <li{!! $path === 'admin/laporan' ? ' class="active"' : '' !!} style="background:{{ $path === 'admin/laporan' ? '#36bffa11' : 'none' }}; color:{{ $path === 'admin/laporan' ? '#36bffa' : '#fff' }}; border-radius:10px; margin:8px 16px; display:flex; align-items:center; gap:12px; cursor:pointer; transition:.2s; padding:0;">
-      <a href="/admin/laporan" style="display:flex; align-items:center; gap:12px; color:inherit; text-decoration:none; width:100%; padding:14px 20px;">
-        <svg width="20" height="20" fill="none" stroke="#fff" stroke-width="2"><path d="M3 11h18M9 7V4a1 1 0 012-1h2a1 1 0 012 1v3"/></svg>
-        Laporan
-      </a>
-    </li>
-    <li{!! $path === 'admin/pengaturan' ? ' class="active"' : '' !!} style="background:{{ $path === 'admin/pengaturan' ? '#36bffa11' : 'none' }}; color:{{ $path === 'admin/pengaturan' ? '#36bffa' : '#fff' }}; border-radius:10px; margin:8px 16px; display:flex; align-items:center; gap:12px; cursor:pointer; transition:.2s; padding:0;">
-      <a href="/admin/pengaturan" style="display:flex; align-items:center; gap:12px; color:inherit; text-decoration:none; width:100%; padding:14px 20px;">
+    
+    <li{!! $path === 'admin/profile' ? ' class="active"' : '' !!} style="background:{{ $path === 'admin/profile' ? '#36bffa11' : 'none' }}; color:{{ $path === 'admin/profile' ? '#36bffa' : '#fff' }}; border-radius:10px; margin:8px 16px; display:flex; align-items:center; gap:12px; cursor:pointer; transition:.2s; padding:0;">
+      <a href="/admin/profile" style="display:flex; align-items:center; gap:12px; color:inherit; text-decoration:none; width:100%; padding:14px 20px;">
         <svg width="20" height="20" fill="none" stroke="#fff" stroke-width="2">ircle cx="12" cy="12"2" r="3"/><path d="M19.4 15a1.65 1.65 0 010 3 1.65 1.65 0 01-3-1.3 6 6 0 10-8.8 0A1.65 1.65 0 014.6 18a1.65 1.65 0 010-3"/></svg>
-        Pengaturan
+        Profile
       </a>
     </li>
   </ul>
