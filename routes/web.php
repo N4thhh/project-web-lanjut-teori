@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use Illuminate\Support\Facades\Auth;
+use App\Http\Controllers\CustomerPageController;
 
 /*
 |--------------------------------------------------------------------------
@@ -60,8 +61,6 @@ Route::middleware('role:admin')->prefix('admin')->name('admin.')->group(function
 });
 
 Route::middleware('role:customer')->prefix('customer')->name('customer.')->group(function () {
-    Route::get('/dashboard', function() {
-        // Ganti string dengan view blade
-        return view('customer.dashboard');
-    })->name('dashboard');
+    Route::get('/dashboard', [CustomerPageController::class, 'dashboard'])->name('dashboard');
+    Route::get('/layanan', [CustomerPageController::class, 'layanan'])->name('layanan');
 });
