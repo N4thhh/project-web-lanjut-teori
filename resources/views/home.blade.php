@@ -18,6 +18,7 @@
                     colors: {
                         'primary': '#4FC3F7',
                         'primary-hover': '#25B6F5', 
+                        'accent': '#0288D1',
                     }
                 }
             }

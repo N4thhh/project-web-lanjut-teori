@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use Illuminate\Support\Facades\Auth;
+use App\Http\Controllers\CustomerPageController;
 
 /*
 |--------------------------------------------------------------------------
@@ -31,6 +32,7 @@ Route::post('/login', [AuthController::class, 'login'])
 Route::get('/logout', [AuthController::class, 'logout'])
     ->middleware('auth')
     ->name('logout');
+
 
 Route::get('/home', function() {
     if (!Auth::user()) {
@@ -62,7 +64,6 @@ Route::middleware('role:admin')->prefix('admin')->name('admin.')->group(function
 
 // Customer dashboard
 Route::middleware('role:customer')->prefix('customer')->name('customer.')->group(function () {
-    Route::get('/dashboard', function() {
-        return view('customer.dashboard');
-    })->name('dashboard');
+    Route::get('/dashboard', [CustomerPageController::class, 'dashboard'])->name('dashboard');
+    Route::get('/layanan', [CustomerPageController::class, 'layanan'])->name('layanan');
 });
