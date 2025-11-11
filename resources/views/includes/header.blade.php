@@ -37,13 +37,13 @@
         </a>
 
         {{-- PROFIL --}}
-        <a href="/profil"
+        <a href="{{ route('customer.profile') }}"
            class="flex items-center space-x-2 px-3 py-2 rounded-xl font-semibold
-           {{ (isset($activeMenu) && $activeMenu === 'profil') || Route::is('customer.profil') ? 'bg-primary/10 text-primary' : 'text-gray-600 hover:text-primary' }}">
+           {{ (isset($activeMenu) && $activeMenu === 'profile') || Route::is('customer.profile') ? 'bg-primary/10 text-primary' : 'text-gray-600 hover:text-primary' }}">
             <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
                 <path d="M5.121 17.804A8 8 0 0112 16a8 8 0 016.879 1.804M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
             </svg>
-            <span>Profil</span>
+            <span>Profile</span>
         </a>
     </nav>
 
