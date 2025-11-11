@@ -61,43 +61,6 @@
             margin-bottom: 30px;
             font-size: 16px;
         }
-        .actions-bar {
-            display: flex;
-            justify-content: flex-end;
-            align-items: center;
-            gap: 14px;
-            margin-bottom: 8px;
-        }
-        .btn-export, .btn-date {
-            font-family: inherit;
-            font-weight: 600;
-            border-radius: 9px;
-            border: none;
-            outline: none;
-            font-size: 15px;
-            padding: 13px 23px;
-            cursor: pointer;
-            box-shadow: 0 2px 8px #1746a013;
-            transition: background 0.15s, box-shadow 0.15s;
-        }
-        .btn-export {
-            background: #2196f3;
-            color: #fff;
-        }
-        .btn-export:hover {
-            background: #1565c0;
-        }
-        .btn-date {
-            background: #fff;
-            color: #1746a0;
-            border: 1.5px solid #eaf6ff;
-            display: flex;
-            align-items: center;
-            gap: 7px;
-        }
-        .btn-date:hover {
-            background: #e3f1ff;
-        }
         .stat-card {
             background: linear-gradient(135deg,#eaf6ff 60%, #d2eafd 100%);
             color: #1746a0;
@@ -202,26 +165,6 @@
         <div class="dashboard-header">Dashboard</div>
         <div class="dashboard-welcome">Selamat datang kembali, Admin!</div>
         
-        <div class="actions-bar">
-            <button class="btn-export" id="btnExport">
-                &#128190; Export Data
-            </button>
-
-            <div class="btn-date-wrapper" style="position: relative;">
-                <button class="btn-date" id="btnDate">
-                    <svg width="18" height="18" fill="none" stroke="#2196f3" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;">
-                        <rect x="3" y="5" width="12" height="10" rx="2"/>
-                        <path d="M8 3v2M12 3v2"/>
-                        <path d="M3 9h12"/>
-                    </svg>
-                    Pilih Tanggal
-                </button>
-                <!-- input date disembunyikan tapi tetap bisa dipanggil -->
-                <input type="date" id="hiddenDateInput"
-                    style="position:absolute; opacity:0; right:0; top:0; width:140px; height:45px; cursor:pointer;">
-            </div>
-        </div>
-        
         <div class="stats">
             <div class="stat-card">
                 <div class="stat-title">Total Pesanan Hari Ini</div>
@@ -278,31 +221,5 @@
             </table>
         </div>
     </div>
-
-    <script>
-        // Tombol Export Data
-        document.getElementById('btnExport').addEventListener('click', function() {
-            alert('🔹 Fitur export data belum diaktifkan.\nTambahkan fungsi ekspor (misalnya ke Excel atau CSV) di sini.');
-        });
-
-        // Tombol Pilih Tanggal
-        const btnDate = document.getElementById('btnDate');
-        const hiddenDateInput = document.getElementById('hiddenDateInput');
-
-        // Saat tombol diklik, buka kalender (date picker)
-        btnDate.addEventListener('click', (e) => {
-            e.preventDefault();
-            if (hiddenDateInput.showPicker) {
-                hiddenDateInput.showPicker(); // munculkan kalender (modern browser)
-            } else {
-                hiddenDateInput.focus(); // fallback
-            }
-        });
-
-        // Saat tanggal dipilih, tampilkan di tombol
-        hiddenDateInput.addEventListener('change', () => {
-            btnDate.innerHTML = `📅 ${hiddenDateInput.value}`;
-        });
-    </script>
 </body>
 </html>

@@ -60,7 +60,8 @@
                 <span class="stat-card-single-icon"><i class="fa fa-users"></i></span>
                 <div>
                     <div class="stat-title">Total Pelanggan</div>
-                    <div class="stat-value">1,234</div>
+                    <!-- tambahkan ID di sini -->
+                    <div class="stat-value" id="totalCustomers">1,234</div>
                 </div>
             </div>
         </div>
@@ -153,6 +154,12 @@
                 const row = btn.closest("tr");
                 row.remove();
                 alert("Pelanggan " + name + " berhasil dihapus.");
+
+                // Kurangi total pelanggan
+                const totalEl = document.getElementById("totalCustomers");
+                let total = parseInt(totalEl.textContent.replace(/,/g, ""));
+                if (total > 0) total--;
+                totalEl.textContent = total.toLocaleString("id-ID");
             }
         }
 
@@ -182,6 +189,13 @@
             
             modal.style.display = "none";
             this.reset();
+
+            // Tambah total pelanggan
+            const totalEl = document.getElementById("totalCustomers");
+            let total = parseInt(totalEl.textContent.replace(/,/g, ""));
+            total++;
+            totalEl.textContent = total.toLocaleString("id-ID");
+
             alert("Data pelanggan baru berhasil ditambahkan!");
         });
     </script>
