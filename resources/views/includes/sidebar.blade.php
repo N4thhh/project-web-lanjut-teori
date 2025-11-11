@@ -8,8 +8,7 @@
     <span style="font-size:21px; font-weight:700; color:#36bffa; letter-spacing:1px;">LaundryKu</span>
   </div>
   <ul style="list-style:none; padding:0; margin:0;">
-
-    {{-- DASHBOARD (active hanya di /admin/dashboard) --}}
+    <!-- DASHBOARD -->
     <li
       style="margin:8px 16px; display:flex; align-items:center; gap:12px;
              padding:14px 20px; border-radius:10px; cursor:pointer; transition:.2s;
@@ -26,8 +25,7 @@
         <span>Dashboard</span>
       </a>
     </li>
-
-    {{-- PESANAN --}}
+    <!-- PESANAN -->
     <li
       style="margin:8px 16px; padding:14px 20px; border-radius:10px; cursor:pointer; transition:.2s;
              @if(Route::is('admin.orders.*'))
@@ -44,8 +42,7 @@
         <span>Pesanan</span>
       </a>
     </li>
-
-    {{-- PELANGGAN (Link aktif dan highlight) --}}
+    <!-- PELANGGAN -->
     <li
       style="margin:8px 16px; padding:14px 20px; border-radius:10px; cursor:pointer; transition:.2s;
              @if(Route::is('admin.pelanggan'))
@@ -62,8 +59,7 @@
         <span>Pelanggan</span>
       </a>
     </li>
-
-    {{-- Layanan --}}
+    <!-- LAYANAN -->
     <li style="color:#fff; margin:8px 16px; display:flex; align-items:center; gap:12px; padding:14px 20px; border-radius:10px; cursor:pointer; transition:.2s;">
       <svg width="20" height="20" fill="none" stroke="#fff" stroke-width="2">
         <path d="M20 6H4v12h16z"/>
@@ -71,18 +67,24 @@
       </svg>
       Layanan
     </li>
+    <!-- LAPORAN -->
     <li style="color:#fff; margin:8px 16px; display:flex; align-items:center; gap:12px; padding:14px 20px; border-radius:10px; cursor:pointer; transition:.2s;">
       <svg width="20" height="20" fill="none" stroke="#fff" stroke-width="2">
         <path d="M3 11h18M9 7V4a1 1 0 012-1h2a1 1 0 012 1v3"/>
       </svg>
       Laporan
     </li>
+    <!-- LOGOUT -->
     <li style="color:#fff; margin:8px 16px; display:flex; align-items:center; gap:12px; padding:14px 20px; border-radius:10px; cursor:pointer; transition:.2s;">
-      <svg width="20" height="20" fill="none" stroke="#fff" stroke-width="2">
-        <circle cx="12" cy="12" r="3"/>
-        <path d="M19.4 15a1.65 1.65 0 010 3 1.65 1.65 0 01-3-1.3 6 6 0 10-8.8 0A1.65 1.65 0 014.6 18a1.65 1.65 0 010-3"></path>
-      </svg>
-      Pengaturan
+      <a href="{{ route('logout') }}"
+         style="color:inherit; text-decoration:none; display:flex; align-items:center; gap:12px; width:100%;">
+        <svg width="20" height="20" fill="none" stroke="#fff" stroke-width="2">
+          <path d="M16 17v-1a4 4 0 0 0-4-4H4"/>
+          <path d="M7 7V3a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v4"/>
+          <path d="M15 11h7"/>
+        </svg>
+        <span>Logout</span>
+      </a>
     </li>
   </ul>
 </div>
