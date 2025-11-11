@@ -27,7 +27,7 @@
       </a>
     </li>
 
-    {{-- PESANAN (active di /admin/pesanan & turunannya) --}}
+    {{-- PESANAN --}}
     <li
       style="margin:8px 16px; padding:14px 20px; border-radius:10px; cursor:pointer; transition:.2s;
              @if(Route::is('admin.orders.*'))
@@ -45,14 +45,25 @@
       </a>
     </li>
 
-    {{-- Sisanya dibiarkan persis seperti semula --}}
-    <li style="color:#fff; margin:8px 16px; display:flex; align-items:center; gap:12px; padding:14px 20px; border-radius:10px; cursor:pointer; transition:.2s;">
-      <svg width="20" height="20" fill="none" stroke="#fff" stroke-width="2">
-        <circle cx="10" cy="8" r="4"/>
-        <path d="M2 21v-2a4 4 0 014-4h8a4 4 0 014 4v2"></path>
-      </svg>
-      Pelanggan
+    {{-- PELANGGAN (Link aktif dan highlight) --}}
+    <li
+      style="margin:8px 16px; padding:14px 20px; border-radius:10px; cursor:pointer; transition:.2s;
+             @if(Route::is('admin.pelanggan'))
+                background:#36bffa11; color:#36bffa; font-weight:600;
+             @else
+                color:#fff;
+             @endif">
+      <a href="{{ route('admin.pelanggan') }}"
+         style="color:inherit; text-decoration:none; display:flex; align-items:center; gap:12px; width:100%;">
+        <svg width="20" height="20" fill="none" stroke="{{ Route::is('admin.pelanggan') ? '#36bffa' : '#fff' }}" stroke-width="2">
+          <circle cx="10" cy="8" r="4"/>
+          <path d="M2 21v-2a4 4 0 014-4h8a4 4 0 014 4v2"></path>
+        </svg>
+        <span>Pelanggan</span>
+      </a>
     </li>
+
+    {{-- Layanan --}}
     <li style="color:#fff; margin:8px 16px; display:flex; align-items:center; gap:12px; padding:14px 20px; border-radius:10px; cursor:pointer; transition:.2s;">
       <svg width="20" height="20" fill="none" stroke="#fff" stroke-width="2">
         <path d="M20 6H4v12h16z"/>
