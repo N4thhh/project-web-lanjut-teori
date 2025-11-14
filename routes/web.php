@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\CustomerPageController;
-use App\Http\Controllers\OrderController; // ⬅️ TAMBAH INI
+use App\Http\Controllers\OrderController;
 
 /*
 |--------------------------------------------------------------------------
@@ -12,89 +12,88 @@ use App\Http\Controllers\OrderController; // ⬅️ TAMBAH INI
 |--------------------------------------------------------------------------
 */
 
+// ==================== GUEST HOME =====================
+
 Route::get('/', function () {
     return view('home');
 })->middleware('guest');
 
-Route::get('/register', [AuthController::class, 'showRegisterForm'])
-    ->middleware('guest')
-    ->name('register');
+// ==================== AUTH =====================
 
-Route::post('/register', [AuthController::class, 'register'])
-    ->middleware('guest');
+Route::middleware('guest')->group(function () {
+    Route::get('/register', [AuthController::class, 'showRegisterForm'])->name('register');
+    Route::post('/register', [AuthController::class, 'register']);
 
-Route::get('/login', [AuthController::class, 'showLoginForm'])
-    ->middleware('guest')
-    ->name('login');
-
-Route::post('/login', [AuthController::class, 'login'])
-    ->middleware('guest');
+    Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
+    Route::post('/login', [AuthController::class, 'login']);
+});
 
 Route::get('/logout', [AuthController::class, 'logout'])
     ->middleware('auth')
     ->name('logout');
 
-Route::get('/home', function() {
+// ==================== HOME REDIRECT =====================
+
+Route::get('/home', function () {
     if (!Auth::user()) {
         Auth::logout();
-        return redirect()->route('login')->withErrors(['email' => 'Sesi Anda telah berakhir.']);
+        return redirect()->route('login')
+            ->withErrors(['email' => 'Sesi Anda telah berakhir.']);
     }
-    
-    $role = Auth::user()->role;
-    
-    if ($role === 'admin') {
-        return redirect()->route('admin.dashboard');
-    } else if ($role === 'customer') {
-        return redirect()->route('customer.dashboard');
-    }
-    
-    Auth::logout();
-    session()->invalidate();
-    session()->regenerateToken();
-    
-    return redirect()->route('login')->withErrors(['email' => 'Akun Anda tidak memiliki peran yang valid.']);
+
+    return match (Auth::user()->role) {
+        'admin'    => redirect()->route('admin.dashboard'),
+        'customer' => redirect()->route('customer.dashboard'),
+        default    => redirect()->route('login')
+                        ->withErrors(['email' => 'Akun Anda tidak memiliki peran yang valid.']),
+    };
 })->middleware('auth')->name('home');
 
-// ======================= ADMIN ROUTES =======================
+// ==================== ADMIN ROUTES =====================
 
-Route::middleware('role:admin')->prefix('admin')->name('admin.')->group(function () {
+Route::middleware(['auth','role:admin'])->prefix('admin')->name('admin.')->group(function () {
 
-    // Dashboard admin
-    Route::get('/dashboard', function() {
+    Route::get('/dashboard', function () {
         return view('admin.dashboard');
     })->name('dashboard');
 
-    // ✅ Data Pesanan (Riwayat semua pesanan untuk admin)
+    // Kelola pesanan
     Route::get('/pesanan', [OrderController::class, 'index'])->name('orders.index');
     Route::get('/pesanan/{order}', [OrderController::class, 'show'])->name('orders.show');
-    Route::patch('/pesanan/{order}/status', [OrderController::class, 'updateStatus'])->name('orders.update-status');
-});
-Route::middleware('role:admin')->prefix('admin')->name('admin.')->group(function () {
-    Route::get('/dashboard', function() {
-        return view('admin.dashboard');
-    })->name('dashboard');
+    Route::patch('/pesanan/{order}/status', [OrderController::class, 'updateStatus'])
+        ->name('orders.update-status');
 
-    // Tambahkan baris ini:
-    Route::get('/pelanggan', function() {
+    // Data pelanggan
+    Route::get('/pelanggan', function () {
         return view('admin.pelanggan');
     })->name('pelanggan');
 });
 
+// ==================== CUSTOMER ROUTES =====================
 
-// ===================== CUSTOMER ROUTES ======================
+Route::middleware(['auth','role:customer'])
+    ->prefix('customer')
+    ->name('customer.')
+    ->group(function () {
 
-Route::middleware('role:customer')->prefix('customer')->name('customer.')->group(function () {
+        Route::get('/dashboard', [CustomerPageController::class, 'dashboard'])
+            ->name('dashboard');
 
-    // Dashboard customer
-    Route::get('/dashboard', [CustomerPageController::class, 'dashboard'])->name('dashboard');
+        Route::get('/layanan', [CustomerPageController::class, 'layanan'])
+            ->name('layanan');
 
-    // Halaman layanan
-    Route::get('/layanan', [CustomerPageController::class, 'layanan'])->name('layanan');
+        Route::get('/riwayat-pesanan', [CustomerPageController::class, 'riwayatPesanan'])
+            ->name('riwayat-pesanan');
 
-    // Riwayat pesanan
-    Route::get('/riwayat-pesanan', [CustomerPageController::class, 'riwayatPesanan'])->name('riwayat-pesanan');
+        // ======================== PROFILE (TIDAK ERROR LAGI) ========================
 
-    Route::get('/profile', [CustomerPageController::class, 'profile'])->name('profile');
-    Route::post('/profile', [CustomerPageController::class, 'updateProfile'])->name('profile.update');
-});
- 
+        // Halaman profil
+        Route::get('/profile', [CustomerPageController::class, 'profile'])
+            ->name('profile');
+
+        // Update profil
+        Route::post('/profile/update', [CustomerPageController::class, 'updateProfile'])
+            ->name('profile.update');
+
+    });
+
