@@ -5,6 +5,7 @@ use App\Http\Controllers\AuthController;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\CustomerPageController;
 use App\Http\Controllers\OrderController;
+use App\Http\Controllers\AdminServiceController;
 
 /*
 |--------------------------------------------------------------------------
@@ -57,6 +58,14 @@ Route::middleware(['auth','role:admin'])->prefix('admin')->name('admin.')->group
         return view('admin.dashboard');
     })->name('dashboard');
 
+    // Kelola layanan
+    Route::get('/layanan', [AdminServiceController::class, 'index'])->name('layanan');
+    Route::get('/layanan/create', [AdminServiceController::class, 'create'])->name('layanan.create');
+    Route::post('/layanan', [AdminServiceController::class, 'store'])->name('layanan.store');
+    Route::get('/layanan/{id}/edit', [AdminServiceController::class, 'edit'])->name('layanan.edit');
+    Route::put('/layanan/{id}', [AdminServiceController::class, 'update'])->name('layanan.update');
+    Route::delete('/layanan/{id}', [AdminServiceController::class, 'destroy'])->name('layanan.destroy');
+
     // Kelola pesanan
     Route::get('/pesanan', [OrderController::class, 'index'])->name('orders.index');
     Route::get('/pesanan/{order}', [OrderController::class, 'show'])->name('orders.show');
@@ -85,7 +94,7 @@ Route::middleware(['auth','role:customer'])
         Route::get('/riwayat-pesanan', [CustomerPageController::class, 'riwayatPesanan'])
             ->name('riwayat-pesanan');
 
-        // ======================== PROFILE (TIDAK ERROR LAGI) ========================
+        // ======================== PROFILE ========================
 
         // Halaman profil
         Route::get('/profile', [CustomerPageController::class, 'profile'])

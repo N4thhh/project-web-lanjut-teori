@@ -10,15 +10,16 @@ return new class extends Migration
      * Run the migrations.
      */
     public function up(): void
-    {
-        Schema::create('laundry_services', function (Blueprint $table) {
-            $table->id();
-            $table->string('nama_layanan', 150);
-            $table->text('deskripsi')->nullable();
-            $table->decimal('harga', 12, 2);
-            $table->timestamps();
-        });
-    }
+{
+    Schema::create('laundry_services', function (Blueprint $table) {
+        $table->id();
+        $table->string('nama_layanan', 150);
+        $table->text('deskripsi')->nullable();
+        $table->decimal('harga', 12, 2);
+        $table->boolean('is_active')->default(true);
+        $table->timestamps();
+    });
+}
 
     /**
      * Reverse the migrations.

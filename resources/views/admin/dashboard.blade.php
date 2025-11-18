@@ -2,223 +2,121 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <title>Admin LaundryKu Dashboard</title>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;700&display=swap" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Admin - LaundryKu</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        body {
-            font-family: 'Montserrat', Arial, sans-serif;
-            background: #f6f8fc;
-            margin: 0;
-        }
-        .sidebar {
-            width: 220px;
-            background: #1746a0;
-            height: 100vh;
-            float: left;
-            border-right: 1px solid #eee;
-            box-shadow: 2px 0 8px #0001;
-        }
-        .sidebar h2 {
-            color: #36bffa;
-            font-size: 22px;
-            margin: 28px 22px 26px 22px;
-            font-weight: bold;
-            letter-spacing: 1px;
-        }
-        .sidebar ul {
-            list-style: none;
-            padding: 0;
-        }
-        .sidebar li {
-            color: #fff;
-            padding: 15px 26px;
-            margin: 6px 0;
-            cursor: pointer;
-            border-radius: 9px;
-            font-weight: 500;
-            transition: 0.17s;
-            display: flex;
-            align-items: center;
-        }
-        .sidebar li.active,
-        .sidebar li:hover {
-            background: #eaf6ff;
-            color: #1746a0;
-        }
-        .content {
-            margin-left: 220px;
-            padding: 40px 4vw 25px 4vw;
-        }
-        .dashboard-header {
-            font-size: 25px;
-            color: #1746a0;
-            font-weight: 700;
-            margin-bottom: 8px;
-            letter-spacing: .5px;
-        }
-        .dashboard-welcome {
-            color: #7987ae;
-            margin-bottom: 30px;
-            font-size: 16px;
-        }
-        .stat-card {
-            background: linear-gradient(135deg,#eaf6ff 60%, #d2eafd 100%);
-            color: #1746a0;
-            box-shadow: 0 8px 28px #1746a015;
-            border: 1.5px solid #d2eafd;
-            padding: 32px 34px;
-            border-radius: 18px;
-            min-width: 220px;
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            transition:transform .15s;
-        }
-        .stat-title {
-            font-size: 15px;
-            color: #7987ae;
-            margin-bottom: 10px;
-        }
-        .stat-value {
-            font-size: 32px;
-            font-weight: bold;
-            color: #1746a0;
-        }
-        .stats {
-            display: flex;
-            gap: 32px;
-            margin-bottom: 34px;
-        }
-        .orders {
-            background: #fff;
-            border-radius: 18px;
-            padding: 30px;
-            margin-bottom: 17px;
-            box-shadow: 0 4px 24px #1746a012;
-            border: 1.5px solid #eaf6ff;
-        }
-        .orders-title {
-            font-size: 18px;
-            font-weight: 700;
-            color: #1746a0;
-            margin-bottom: 18px;
-            letter-spacing: .2px;
-        }
-        table {
-            width: 100%;
-            border-collapse: separate;
-            border-spacing: 0 12px;
-            background: transparent;
-        }
-        th, td {
-            padding: 14px 8px;
-            text-align: left;
-            font-size: 16px;
-        }
-        th {
-            color: #1746a0;
-            background: #f3f7fa;
-            border-bottom: 2px solid #eaf6ff;
-            font-weight: 600;
-        }
-        tr {
-            transition: background .22s;
-            height: 54px;
-        }
-        tr:hover {
-            background: #f6faff;
-        }
-        td.status {
-            text-align: left !important;
-            padding-left: 14px;
-            vertical-align: middle;
-        }
-        .status-badge {
-            display: inline-block;
-            text-align: left;
-            margin-left: 0;
-            min-width: 110px;
-            min-height: 38px;
-            padding: 10px 30px;
-            border-radius: 11px;
-            font-weight: bold;
-            font-size: 16px;
-            box-shadow: 0 2px 10px #36bffa22;
-            color: #fff;
-        }
-        .diproses.status-badge {
-            background: #36bffa;
-        }
-        .selesai.status-badge {
-            background: #46c47c;
-        }
-        @media (max-width:990px){
-            .stats{flex-direction:column;}
-            .content{padding:22px;}
-        }
+        body { font-family: 'Inter', sans-serif; }
     </style>
 </head>
-<body>
-    @include('includes.sidebar')
-    <div class="content">
-        <div class="dashboard-header">Dashboard</div>
-        <div class="dashboard-welcome">Selamat datang kembali, Admin!</div>
-        
-        <div class="stats">
-            <div class="stat-card">
-                <div class="stat-title">Total Pesanan Hari Ini</div>
-                <div class="stat-value">24</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-title">Pelanggan Aktif</div>
-                <div class="stat-value">156</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-title">Pesanan Selesai</div>
-                <div class="stat-value">18</div>
-            </div>
-        </div>
+<body class="bg-gray-50 text-gray-800">
 
-        <div class="orders">
-            <div class="orders-title">Pesanan Terbaru</div>
-            <table>
-                <tr>
-                    <th>Order ID</th>
-                    <th>Pelanggan</th>
-                    <th>Layanan</th>
-                    <th>Status</th>
-                    <th>Total</th>
-                </tr>
-                <tr>
-                    <td>#12345</td>
-                    <td>Ahmad Rizki</td>
-                    <td>Cuci Kering</td>
-                    <td class="status"><span class="status-badge diproses">Diproses</span></td>
-                    <td>Rp 8.000</td>
-                </tr>
-                <tr>
-                    <td>#12343</td>
-                    <td>Budi Santoso</td>
-                    <td>Cuci Lipat</td>
-                    <td class="status"><span class="status-badge selesai">Selesai</span></td>
-                    <td>Rp 10.000</td>
-                </tr>
-                <tr>
-                    <td>#12342</td>
-                    <td>Maya Sari</td>
-                    <td>Cuci Karpet</td>
-                    <td class="status"><span class="status-badge selesai">Selesai</span></td>
-                    <td>Rp 20.000</td>
-                </tr>
-                <tr>
-                    <td>#12341</td>
-                    <td>Andi Wijaya</td>
-                    <td>Cuci Sepatu</td>
-                    <td class="status"><span class="status-badge diproses">Diproses</span></td>
-                    <td>Rp 15.000</td>
-                </tr>
-            </table>
+    <div class="flex h-screen overflow-hidden">
+
+        @include('includes.sidebar')
+
+        <div class="relative flex flex-col flex-1 overflow-y-auto overflow-x-hidden">
+            
+            <header class="bg-white border-b border-gray-200 sticky top-0 z-30">
+                <div class="flex items-center justify-between px-6 py-3">
+                    <div class="flex items-center bg-gray-100 rounded-lg px-4 py-2 w-64">
+                        <svg class="w-5 h-5 text-gray-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                        </svg>
+                        <input type="text" placeholder="Cari..." class="bg-transparent border-none focus:outline-none text-sm w-full">
+                    </div>
+                    <div class="flex items-center space-x-4">
+                        <div class="flex items-center space-x-2">
+                            <img src="https://ui-avatars.com/api/?name=Admin&background=0D8ABC&color=fff" alt="Admin" class="w-8 h-8 rounded-full">
+                            <span class="text-sm font-medium text-gray-700">Admin</span>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <main class="w-full flex-grow p-6">
+                <h1 class="text-3xl font-bold text-gray-800 mb-6">Dashboard</h1>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                    <div class="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <p class="text-xs font-medium text-gray-500 uppercase">Total Pendapatan</p>
+                                <h3 class="text-2xl font-bold text-gray-800 mt-1">Rp 12.500.000</h3>
+                            </div>
+                            <div class="p-2 bg-green-50 rounded-lg">
+                                <svg class="w-6 h-6 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                </svg>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <p class="text-xs font-medium text-gray-500 uppercase">Pesanan Baru</p>
+                                <h3 class="text-2xl font-bold text-gray-800 mt-1">24</h3>
+                            </div>
+                            <div class="p-2 bg-blue-50 rounded-lg">
+                                <svg class="w-6 h-6 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path>
+                                </svg>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <p class="text-xs font-medium text-gray-500 uppercase">Pelanggan Aktif</p>
+                                <h3 class="text-2xl font-bold text-gray-800 mt-1">156</h3>
+                            </div>
+                            <div class="p-2 bg-purple-50 rounded-lg">
+                                <svg class="w-6 h-6 text-purple-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
+                                </svg>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+                    <div class="px-6 py-4 border-b border-gray-100">
+                        <h3 class="font-semibold text-gray-800">Pesanan Terbaru</h3>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-sm text-left text-gray-500">
+                            <thead class="text-xs text-gray-700 uppercase bg-gray-50">
+                                <tr>
+                                    <th class="px-6 py-3">ID Pesanan</th>
+                                    <th class="px-6 py-3">Pelanggan</th>
+                                    <th class="px-6 py-3">Layanan</th>
+                                    <th class="px-6 py-3">Status</th>
+                                    <th class="px-6 py-3">Total</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr class="bg-white border-b hover:bg-gray-50">
+                                    <td class="px-6 py-4 font-medium text-gray-900">#ORD-001</td>
+                                    <td class="px-6 py-4">Budi Santoso</td>
+                                    <td class="px-6 py-4">Cuci Komplit</td>
+                                    <td class="px-6 py-4"><span class="bg-green-100 text-green-800 text-xs font-medium px-2.5 py-0.5 rounded">Selesai</span></td>
+                                    <td class="px-6 py-4">Rp 45.000</td>
+                                </tr>
+                                <tr class="bg-white border-b hover:bg-gray-50">
+                                    <td class="px-6 py-4 font-medium text-gray-900">#ORD-002</td>
+                                    <td class="px-6 py-4">Siti Aminah</td>
+                                    <td class="px-6 py-4">Setrika Saja</td>
+                                    <td class="px-6 py-4"><span class="bg-yellow-100 text-yellow-800 text-xs font-medium px-2.5 py-0.5 rounded">Proses</span></td>
+                                    <td class="px-6 py-4">Rp 20.000</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </main>
         </div>
     </div>
 </body>

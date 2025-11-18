@@ -1,90 +1,82 @@
-<!-- resources/views/includes/sidebar.blade.php -->
-<div class="sidebar" style="width:220px; background:#1e293b; height:100vh; float:left; border-right:1px solid #222; box-shadow:2px 0 8px #0002;">
-  <div style="display:flex; align-items:center; gap:8px; padding:28px 24px 16px 24px;">
-    <svg width="30" height="30" fill="#36bffa" viewBox="0 0 24 24">
-      <circle cx="12" cy="12" r="10" fill="#eaf6ff"/>
-      <path d="M8 16h8M8 12h8M8 8h8" stroke="#36bffa" stroke-width="2" stroke-linecap="round"/>
-    </svg>
-    <span style="font-size:21px; font-weight:700; color:#36bffa; letter-spacing:1px;">LaundryKu</span>
-  </div>
-  <ul style="list-style:none; padding:0; margin:0;">
-    <!-- DASHBOARD -->
-    <li
-      style="margin:8px 16px; display:flex; align-items:center; gap:12px;
-             padding:14px 20px; border-radius:10px; cursor:pointer; transition:.2s;
-             @if(Route::is('admin.dashboard'))
-                background:#36bffa11; color:#36bffa; font-weight:600;
-             @else
-                color:#fff;
-             @endif">
-      <a href="{{ route('admin.dashboard') }}"
-         style="color:inherit; text-decoration:none; display:flex; align-items:center; gap:12px; width:100%;">
-        <svg width="20" height="20" fill="none" stroke="{{ Route::is('admin.dashboard') ? '#36bffa' : '#fff' }}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2V7a2 2 0 00-2-2h-6a2 2 0 00-2 2v3m0 0l-2 2"></path>
-        </svg>
-        <span>Dashboard</span>
-      </a>
-    </li>
-    <!-- PESANAN -->
-    <li
-      style="margin:8px 16px; padding:14px 20px; border-radius:10px; cursor:pointer; transition:.2s;
-             @if(Route::is('admin.orders.*'))
-                background:#36bffa11; color:#36bffa; font-weight:600;
-             @else
-                color:#fff;
-             @endif">
-      <a href="{{ route('admin.orders.index') }}"
-         style="color:inherit; text-decoration:none; display:flex; align-items:center; gap:12px; width:100%;">
-        <svg width="20" height="20" fill="none" stroke="{{ Route::is('admin.orders.*') ? '#36bffa' : '#fff' }}" stroke-width="2">
-          <rect x="3" y="7" width="14" height="10" rx="2"/>
-          <path d="M16 3v4M8 3v4" />
-        </svg>
-        <span>Pesanan</span>
-      </a>
-    </li>
-    <!-- PELANGGAN -->
-    <li
-      style="margin:8px 16px; padding:14px 20px; border-radius:10px; cursor:pointer; transition:.2s;
-             @if(Route::is('admin.pelanggan'))
-                background:#36bffa11; color:#36bffa; font-weight:600;
-             @else
-                color:#fff;
-             @endif">
-      <a href="{{ route('admin.pelanggan') }}"
-         style="color:inherit; text-decoration:none; display:flex; align-items:center; gap:12px; width:100%;">
-        <svg width="20" height="20" fill="none" stroke="{{ Route::is('admin.pelanggan') ? '#36bffa' : '#fff' }}" stroke-width="2">
-          <circle cx="10" cy="8" r="4"/>
-          <path d="M2 21v-2a4 4 0 014-4h8a4 4 0 014 4v2"></path>
-        </svg>
-        <span>Pelanggan</span>
-      </a>
-    </li>
-    <!-- LAYANAN -->
-    <li style="color:#fff; margin:8px 16px; display:flex; align-items:center; gap:12px; padding:14px 20px; border-radius:10px; cursor:pointer; transition:.2s;">
-      <svg width="20" height="20" fill="none" stroke="#fff" stroke-width="2">
-        <path d="M20 6H4v12h16z"/>
-        <path d="M9 6V4a1 1 0 011-1h4a1 1 0 011 1v2"/>
-      </svg>
-      Layanan
-    </li>
-    <!-- LAPORAN -->
-    <li style="color:#fff; margin:8px 16px; display:flex; align-items:center; gap:12px; padding:14px 20px; border-radius:10px; cursor:pointer; transition:.2s;">
-      <svg width="20" height="20" fill="none" stroke="#fff" stroke-width="2">
-        <path d="M3 11h18M9 7V4a1 1 0 012-1h2a1 1 0 012 1v3"/>
-      </svg>
-      Laporan
-    </li>
-    <!-- LOGOUT -->
-    <li style="color:#fff; margin:8px 16px; display:flex; align-items:center; gap:12px; padding:14px 20px; border-radius:10px; cursor:pointer; transition:.2s;">
-      <a href="{{ route('logout') }}"
-         style="color:inherit; text-decoration:none; display:flex; align-items:center; gap:12px; width:100%;">
-        <svg width="20" height="20" fill="none" stroke="#fff" stroke-width="2">
-          <path d="M16 17v-1a4 4 0 0 0-4-4H4"/>
-          <path d="M7 7V3a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v4"/>
-          <path d="M15 11h7"/>
-        </svg>
-        <span>Logout</span>
-      </a>
-    </li>
-  </ul>
-</div>
+<aside class="w-64 bg-white border-r border-gray-200 hidden md:flex flex-col">
+    <div class="h-16 flex items-center justify-center border-b border-gray-200">
+        <div class="flex items-center space-x-2">
+            <img src="{{ asset('images/Logo.png') }}" alt="Logo" class="w-8 h-8">
+            <span class="text-xl font-bold text-blue-600">LaundryKu</span>
+        </div>
+    </div>
+
+    <nav class="flex-1 overflow-y-auto py-4">
+        <ul class="space-y-1">
+            
+            <li>
+                <a href="{{ route('admin.dashboard') }}" 
+                   class="flex items-center px-6 py-3 transition-colors duration-200 
+                   {{ Route::is('admin.dashboard') ? 'text-gray-800 bg-blue-50 border-r-4 border-blue-500' : 'text-gray-500 hover:text-gray-800 hover:bg-gray-50' }}">
+                    <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path>
+                    </svg>
+                    <span class="font-medium">Dashboard</span>
+                </a>
+            </li>
+
+            <li>
+                <a href="{{ route('admin.layanan') }}" 
+                   class="flex items-center px-6 py-3 transition-colors duration-200 
+                   {{ Route::is('admin.layanan') ? 'text-gray-800 bg-blue-50 border-r-4 border-blue-500' : 'text-gray-500 hover:text-gray-800 hover:bg-gray-50' }}">
+                    <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
+                    </svg>
+                    <span class="font-medium">Layanan</span>
+                </a>
+            </li>
+
+            <li>
+                <a href="#" 
+                   class="flex items-center px-6 py-3 transition-colors duration-200 
+                   {{ Route::is('admin.pesanan*') ? 'text-gray-800 bg-blue-50 border-r-4 border-blue-500' : 'text-gray-500 hover:text-gray-800 hover:bg-gray-50' }}">
+                    <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"></path>
+                    </svg>
+                    <span class="font-medium">Pesanan</span>
+                </a>
+            </li>
+
+            <li>
+                <a href="#" 
+                   class="flex items-center px-6 py-3 transition-colors duration-200 
+                   {{ Route::is('admin.pelanggan*') ? 'text-gray-800 bg-blue-50 border-r-4 border-blue-500' : 'text-gray-500 hover:text-gray-800 hover:bg-gray-50' }}">
+                    <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path>
+                    </svg>
+                    <span class="font-medium">Pelanggan</span>
+                </a>
+            </li>
+            
+            <li>
+                <a href="#" class="flex items-center px-6 py-3 text-gray-500 hover:text-gray-800 hover:bg-gray-50 transition-colors duration-200">
+                    <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                    </svg>
+                    <span class="font-medium">Laporan</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+
+    <div class="border-t border-gray-200 p-4">
+        <div class="flex items-center space-x-3 mb-4">
+            <img src="https://ui-avatars.com/api/?name=Admin&background=0D8ABC&color=fff" alt="Admin" class="w-10 h-10 rounded-full">
+            <div>
+                <p class="text-sm font-medium text-gray-800">Admin Laundry</p>
+                <p class="text-xs text-gray-500">admin@laundryku.com</p>
+            </div>
+        </div>
+        <a href="{{ route('logout') }}" class="flex items-center justify-center w-full px-4 py-2 text-sm font-medium text-red-600 bg-red-50 rounded-lg hover:bg-red-100 transition-colors duration-200">
+            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a2 2 0 01-2 2H7a2 2 0 01-2-2V7a2 2 0 012-2h4a2 2 0 012 2v1"></path>
+            </svg>
+            Logout
+        </a>
+    </div>
+</aside>

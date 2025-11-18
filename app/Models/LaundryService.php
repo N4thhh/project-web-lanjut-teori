@@ -14,5 +14,10 @@ class LaundryService extends Model
         'nama_layanan',
         'deskripsi',
         'harga',
+        'is_active',
+    ];
+
+    protected $casts = [
+    'is_active' => 'boolean',
     ];
 }
