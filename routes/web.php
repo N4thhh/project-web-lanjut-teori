@@ -14,13 +14,11 @@ use App\Http\Controllers\AdminServiceController;
 */
 
 // ==================== GUEST HOME =====================
-
 Route::get('/', function () {
     return view('home');
 })->middleware('guest');
 
 // ==================== AUTH =====================
-
 Route::middleware('guest')->group(function () {
     Route::get('/register', [AuthController::class, 'showRegisterForm'])->name('register');
     Route::post('/register', [AuthController::class, 'register']);
@@ -34,7 +32,6 @@ Route::get('/logout', [AuthController::class, 'logout'])
     ->name('logout');
 
 // ==================== HOME REDIRECT =====================
-
 Route::get('/home', function () {
     if (!Auth::user()) {
         Auth::logout();
@@ -50,59 +47,54 @@ Route::get('/home', function () {
     };
 })->middleware('auth')->name('home');
 
+
 // ==================== ADMIN ROUTES =====================
+Route::middleware(['auth','role:admin'])
+    ->prefix('admin')
+    ->name('admin.')
+    ->group(function () {
 
-Route::middleware(['auth','role:admin'])->prefix('admin')->name('admin.')->group(function () {
+        // Dashboard
+        Route::get('/dashboard', function () {
+            return view('admin.dashboard');
+        })->name('dashboard');
 
-    Route::get('/dashboard', function () {
-        return view('admin.dashboard');
-    })->name('dashboard');
+        // ==================== LAYANAN =====================
+        Route::get('/layanan',        [AdminServiceController::class, 'index'])->name('layanan');
+        Route::get('/layanan/create', [AdminServiceController::class, 'create'])->name('layanan.create');
+        Route::post('/layanan',       [AdminServiceController::class, 'store'])->name('layanan.store');
+        Route::get('/layanan/{id}/edit', [AdminServiceController::class, 'edit'])->name('layanan.edit');
+        Route::put('/layanan/{id}',      [AdminServiceController::class, 'update'])->name('layanan.update');
+        Route::delete('/layanan/{id}',   [AdminServiceController::class, 'destroy'])->name('layanan.destroy');
 
-    // Kelola layanan
-    Route::get('/layanan', [AdminServiceController::class, 'index'])->name('layanan');
-    Route::get('/layanan/create', [AdminServiceController::class, 'create'])->name('layanan.create');
-    Route::post('/layanan', [AdminServiceController::class, 'store'])->name('layanan.store');
-    Route::get('/layanan/{id}/edit', [AdminServiceController::class, 'edit'])->name('layanan.edit');
-    Route::put('/layanan/{id}', [AdminServiceController::class, 'update'])->name('layanan.update');
-    Route::delete('/layanan/{id}', [AdminServiceController::class, 'destroy'])->name('layanan.destroy');
+        // ==================== PESANAN =====================
+        Route::get('/pesanan', [OrderController::class, 'index'])->name('orders.index');
+        Route::get('/pesanan/{order}', [OrderController::class, 'show'])->name('orders.show');
+        Route::patch('/pesanan/{order}/status', [OrderController::class, 'updateStatus'])->name('orders.update-status');
 
-    // Kelola pesanan
-    Route::get('/pesanan', [OrderController::class, 'index'])->name('orders.index');
-    Route::get('/pesanan/{order}', [OrderController::class, 'show'])->name('orders.show');
-    Route::patch('/pesanan/{order}/status', [OrderController::class, 'updateStatus'])
-        ->name('orders.update-status');
+        // ==================== PELANGGAN =====================
+        Route::get('/pelanggan', function () {
+            return view('admin.pelanggan');
+        })->name('pelanggan');
+    });
 
-    // Data pelanggan
-    Route::get('/pelanggan', function () {
-        return view('admin.pelanggan');
-    })->name('pelanggan');
-});
 
 // ==================== CUSTOMER ROUTES =====================
-
 Route::middleware(['auth','role:customer'])
     ->prefix('customer')
     ->name('customer.')
     ->group(function () {
 
-        Route::get('/dashboard', [CustomerPageController::class, 'dashboard'])
-            ->name('dashboard');
+        Route::get('/dashboard', [CustomerPageController::class, 'dashboard'])->name('dashboard');
 
-        Route::get('/layanan', [CustomerPageController::class, 'layanan'])
-            ->name('layanan');
+        Route::get('/layanan', [CustomerPageController::class, 'layanan'])->name('layanan');
 
         Route::get('/riwayat-pesanan', [CustomerPageController::class, 'riwayatPesanan'])
             ->name('riwayat-pesanan');
 
         // ======================== PROFILE ========================
+        Route::get('/profile', [CustomerPageController::class, 'profile'])->name('profile');
 
-        // Halaman profil
-        Route::get('/profile', [CustomerPageController::class, 'profile'])
-            ->name('profile');
-
-        // Update profil
         Route::post('/profile/update', [CustomerPageController::class, 'updateProfile'])
             ->name('profile.update');
-
     });
-

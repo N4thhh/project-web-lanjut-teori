@@ -42,8 +42,9 @@
                 </a>
             </li>
 
+            <!-- DIBENERIN DI SINI -->
             <li>
-                <a href="#" 
+                <a href="{{ route('admin.pelanggan') }}" 
                    class="flex items-center px-6 py-3 transition-colors duration-200 
                    {{ Route::is('admin.pelanggan*') ? 'text-gray-800 bg-blue-50 border-r-4 border-blue-500' : 'text-gray-500 hover:text-gray-800 hover:bg-gray-50' }}">
                     <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -52,7 +53,7 @@
                     <span class="font-medium">Pelanggan</span>
                 </a>
             </li>
-            
+
             <li>
                 <a href="#" class="flex items-center px-6 py-3 text-gray-500 hover:text-gray-800 hover:bg-gray-50 transition-colors duration-200">
                     <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">

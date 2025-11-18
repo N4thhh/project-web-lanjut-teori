@@ -2,202 +2,180 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <title>Manajemen Pelanggan | Admin LaundryKu</title>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;700&display=swap" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Data Pelanggan - LaundryKu</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        body { font-family: 'Montserrat', Arial, sans-serif; background: #f6f8fc; margin: 0; }
-        .sidebar { width: 220px; background: #1746a0; height: 100vh; float: left; border-right: 1px solid #eee; box-shadow: 2px 0 8px #0001; }
-        .content { margin-left: 220px; padding: 40px 4vw 25px 4vw; }
-        .dashboard-header { font-size: 25px; color: #1746a0; font-weight: 700; }
-        .dashboard-welcome { color: #7987ae; margin-bottom: 25px; font-size: 16px; }
-        .main-card-wrap { display: flex; gap: 18px; margin-bottom: 28px; }
-        .stat-card-single { background: linear-gradient(135deg,#eaf6ff 70%, #d2eafd 100%); color: #1746a0; box-shadow: 0 8px 24px #1746a015; border: 1.5px solid #d2eafd; padding: 26px 30px; border-radius: 15px; min-width: 190px; min-height: 62px; display: flex; align-items: center; gap: 15px; }
-        .stat-card-single-icon { font-size: 28px; background: #2196f3; color: #fff; padding: 11px 13px; border-radius: 10px; }
-        .stat-title { font-size: 14px; color: #6c7689; }
-        .stat-value { font-size: 25px; font-weight: 700; color: #1746a0; }
-        .customers-toolbar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 18px; flex-wrap: wrap; gap: 10px; }
-        .customers-search { background: #fff; border: 1.5px solid #eaf6ff; border-radius: 9px; padding: 12px 16px; font-size: 15px; min-width: 260px; width: 340px; transition: border-color .18s; }
-        .customers-search:focus { outline: none; border-color: #2196f3;}
-        .btn-add-customer { background: #2196f3; color: #fff; border: none; border-radius: 10px; font-size: 15px; padding: 12px 22px; font-weight: 600; display: flex; align-items: center; gap: 9px; cursor: pointer; box-shadow: 0 2px 10px #1746a013; transition: background 0.16s; }
-        .btn-add-customer:hover { background: #166bc2; }
-        .customers-list { background: #fff; border-radius: 16px; border: 1.5px solid #eaf6ff; padding: 26px 22px 16px 22px; box-shadow: 0 4px 22px #1746a012;}
-        .customers-list-title { font-size: 18px; font-weight: 700; color: #1746a0; margin-bottom: 18px; }
-        table { width: 100%; border-collapse: separate; border-spacing: 0 8px; background: transparent; }
-        th, td { padding: 10px 12px; text-align: left; font-size: 15.5px; }
-        th { color: #1746a0; background: #f7fafc; font-weight: 600; }
-        tr { background: #fff; }
-        td.customer-info { display: flex; align-items: center; gap: 13px; }
-        .avatar { width: 34px; height: 34px; border-radius: 50%; object-fit: cover; }
-        td.actions { text-align: center; }
-        .btn-delete { background: #ff445c; border: none; border-radius: 50%; width: 34px; height: 34px; display: inline-flex; align-items: center; justify-content: center; cursor: pointer; transition: background .17s; }
-        .btn-delete:hover { background: #d92b47; }
-        .btn-delete svg { width: 20px; height: 20px; stroke: #fff; }
-        @media (max-width:900px){ .content{padding:18px;} .main-card-wrap{flex-direction:column;} .customers-search{width:100%;} }
-
-        /* Modal */
-        .modal { display: none; position: fixed; z-index: 10; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(0,0,0,0.4); }
-        .modal-content { background-color: #fff; margin: 8% auto; padding: 30px 35px; border: 1px solid #ccc; width: 100%; max-width: 480px; border-radius: 15px; box-shadow: 0 4px 20px #0002; }
-        .close { color: #aaa; float: right; font-size: 28px; font-weight: bold; cursor: pointer; }
-        .close:hover { color: #1746a0; }
-        .modal h2 { text-align: center; color: #1746a0; margin-bottom: 25px; }
-        .form-group { margin-bottom: 16px; }
-        label { display: block; margin-bottom: 6px; font-weight: 600; color: #333; font-size: 14px; }
-        input { width: 100%; padding: 10px 12px; border: 1.5px solid #dce7f3; border-radius: 8px; font-size: 14px; transition: border-color .2s; }
-        input:focus { border-color: #2196f3; outline: none; }
-        .btn-submit { width: 100%; background: #2196f3; color: white; border: none; padding: 12px; border-radius: 10px; font-weight: 600; font-size: 15px; cursor: pointer; transition: background 0.2s; }
-        .btn-submit:hover { background: #166bc2; }
+        body { font-family: 'Inter', sans-serif; }
     </style>
 </head>
-<body>
-    @include('includes.sidebar')
-    <div class="content">
-        <div class="dashboard-header">Manajemen Pelanggan</div>
-        <div class="dashboard-welcome">Kelola data pelanggan dan riwayat pesanan</div>
+<body class="bg-gray-50 text-gray-800">
 
-        <div class="main-card-wrap">
-            <div class="stat-card-single">
-                <span class="stat-card-single-icon"><i class="fa fa-users"></i></span>
-                <div>
-                    <div class="stat-title">Total Pelanggan</div>
-                    <!-- tambahkan ID di sini -->
-                    <div class="stat-value" id="totalCustomers">1,234</div>
+    <div class="flex h-screen overflow-hidden">
+
+        {{-- Sidebar --}}
+        @include('includes.sidebar')
+
+        {{-- CONTENT --}}
+        <div class="relative flex flex-col flex-1 overflow-y-auto overflow-x-hidden">
+            
+            {{-- HEADER --}}
+            <header class="bg-white border-b border-gray-200 sticky top-0 z-30">
+                <div class="flex items-center justify-between px-6 py-3">
+                    <h1 class="text-xl font-semibold text-gray-800">Data Pelanggan</h1>
+
+                    <div class="flex items-center space-x-3">
+                        <img src="https://ui-avatars.com/api/?name=Admin&background=0D8ABC&color=fff" 
+                             class="w-8 h-8 rounded-full">
+                        <span class="text-sm font-medium text-gray-700">Admin</span>
+                    </div>
                 </div>
+            </header>
+
+            {{-- MAIN CONTENT --}}
+            <main class="w-full flex-grow p-6">
+
+                {{-- Search + Add --}}
+                <div class="mb-4 flex justify-between items-center">
+                    <input id="searchInput" onkeyup="filterCustomerTable()"
+                        type="text" 
+                        placeholder="Cari pelanggan..."
+                        class="w-72 px-4 py-2 rounded-lg border bg-white shadow-sm focus:outline-none" />
+
+                    <button id="btnAddCustomer"
+                        class="px-4 py-2 bg-blue-600 text-white rounded-lg shadow hover:bg-blue-700">
+                        + Tambah Pelanggan
+                    </button>
+                </div>
+
+                {{-- TABLE --}}
+                <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+                    <table class="w-full text-sm text-left" id="customersTable">
+                        <thead class="bg-gray-50 text-gray-700 uppercase">
+                            <tr>
+                                <th class="px-6 py-3">Nama</th>
+                                <th class="px-6 py-3">Email</th>
+                                <th class="px-6 py-3">Telepon</th>
+                                <th class="px-6 py-3">Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class="border-b">
+                                <td class="px-6 py-3">Budi Santoso</td>
+                                <td class="px-6 py-3">budi@example.com</td>
+                                <td class="px-6 py-3">08123456789</td>
+                                <td class="px-6 py-3">
+                                    <button onclick="deleteCustomer('Budi', this)"
+                                        class="text-red-600 hover:underline">Hapus</button>
+                                </td>
+                            </tr>
+
+                            <tr class="border-b">
+                                <td class="px-6 py-3">Siti Aminah</td>
+                                <td class="px-6 py-3">siti@example.com</td>
+                                <td class="px-6 py-3">085212345678</td>
+                                <td class="px-6 py-3">
+                                    <button onclick="deleteCustomer('Siti', this)"
+                                        class="text-red-600 hover:underline">Hapus</button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+            </main>
+        </div>
+    </div>
+
+    {{-- MODAL TAMBAH PELANGGAN --}}
+    <div id="modalAdd" class="fixed inset-0 bg-black bg-opacity-40 hidden flex items-center justify-center">
+        <div class="bg-white w-96 p-6 rounded-lg shadow-lg">
+            <h2 class="text-lg font-semibold mb-4">Tambah Pelanggan</h2>
+
+            <div class="space-y-3">
+                <input id="inputName" type="text" placeholder="Nama"
+                    class="w-full px-3 py-2 border rounded-lg focus:outline-none">
+
+                <input id="inputEmail" type="email" placeholder="Email"
+                    class="w-full px-3 py-2 border rounded-lg focus:outline-none">
+
+                <input id="inputPhone" type="text" placeholder="Telepon"
+                    class="w-full px-3 py-2 border rounded-lg focus:outline-none">
+            </div>
+
+            <div class="flex justify-end space-x-2 mt-5">
+                <button onclick="closeModal()"
+                    class="px-4 py-2 bg-gray-200 rounded-lg">Batal</button>
+
+                <button onclick="saveCustomer()"
+                    class="px-4 py-2 bg-blue-600 text-white rounded-lg">Simpan</button>
             </div>
         </div>
-
-        <div class="customers-toolbar">
-            <input type="text" class="customers-search" id="searchInput" placeholder="Cari pelanggan..." onkeyup="filterCustomerTable()">
-            <button class="btn-add-customer" id="btnAddCustomer">
-                <i class="fa fa-user-plus"></i> Tambah Pelanggan
-            </button>
-        </div>
-
-        <div class="customers-list">
-            <div class="customers-list-title">Daftar Pelanggan</div>
-            <table id="customersTable">
-                <tr>
-                    <th>Pelanggan</th>
-                    <th>Kontak</th>
-                    <th>Tanggal Bergabung</th>
-                    <th>Total Pesanan</th>
-                    <th style="text-align:center;">Aksi</th>
-                </tr>
-                <tr>
-                    <td class="customer-info">
-                        <img class="avatar" src="https://randomuser.me/api/portraits/men/11.jpg">
-                        Ahmad Rizki <br><span style="color:#888; font-size:13px;">ID: CUST001</span>
-                    </td>
-                    <td>ahmad.rizki@email.com<br><span style="color:#888; font-size:13px;">+62 812 3456 7890</span></td>
-                    <td>10 Des 2023</td>
-                    <td>12</td>
-                    <td class="actions">
-                        <button class="btn-delete" onclick="deleteCustomer('Ahmad Rizki', this)" title="Hapus">
-                            <i class="fa fa-trash"></i>
-                        </button>
-                    </td>
-                </tr>
-            </table>
-        </div>
     </div>
 
-    <!-- MODAL TAMBAH PELANGGAN -->
-    <div id="addCustomerModal" class="modal">
-        <div class="modal-content">
-            <span class="close" id="closeModal">&times;</span>
-            <h2>Tambah Pelanggan</h2>
-            <form id="customerForm">
-                <div class="form-group">
-                    <label>Nama Lengkap</label>
-                    <input type="text" id="custName" placeholder="Masukkan nama lengkap" required>
-                </div>
-                <div class="form-group">
-                    <label>Email</label>
-                    <input type="email" id="custEmail" placeholder="Masukkan email pelanggan" required>
-                </div>
-                <div class="form-group">
-                    <label>No. Telepon</label>
-                    <input type="text" id="custPhone" placeholder="Contoh: +62 812 3456 7890" required>
-                </div>
-                <div class="form-group">
-                    <label>Tanggal Bergabung</label>
-                    <input type="date" id="custJoinDate" required>
-                </div>
-                <button type="submit" class="btn-submit">Simpan Data</button>
-            </form>
-        </div>
-    </div>
-
+    {{-- JAVASCRIPT --}}
     <script>
-        // Search filter
+        const modal = document.getElementById("modalAdd");
+
+        document.getElementById("btnAddCustomer").onclick = () => {
+            modal.classList.remove("hidden");
+        };
+
+        function closeModal() {
+            modal.classList.add("hidden");
+        }
+
         function filterCustomerTable() {
             const filter = document.getElementById("searchInput").value.toLowerCase();
-            const trs = document.querySelectorAll("#customersTable tr");
-            trs.forEach((tr, i) => {
-                if (i === 0) return; // skip header
+            const trs = document.querySelectorAll("#customersTable tbody tr");
+            trs.forEach(tr => {
                 tr.style.display = tr.innerText.toLowerCase().includes(filter) ? "" : "none";
             });
         }
 
-        // Modal handling
-        const modal = document.getElementById("addCustomerModal");
-        const btn = document.getElementById("btnAddCustomer");
-        const span = document.getElementById("closeModal");
-
-        btn.onclick = () => { modal.style.display = "block"; }
-        span.onclick = () => { modal.style.display = "none"; }
-        window.onclick = (e) => { if (e.target === modal) modal.style.display = "none"; }
-
-        // Delete customer
         function deleteCustomer(name, btn) {
-            if (confirm("Yakin hapus data pelanggan " + name + "?")) {
-                const row = btn.closest("tr");
-                row.remove();
-                alert("Pelanggan " + name + " berhasil dihapus.");
-
-                // Kurangi total pelanggan
-                const totalEl = document.getElementById("totalCustomers");
-                let total = parseInt(totalEl.textContent.replace(/,/g, ""));
-                if (total > 0) total--;
-                totalEl.textContent = total.toLocaleString("id-ID");
+            if (confirm("Yakin hapus pelanggan " + name + "?")) {
+                btn.closest("tr").remove();
             }
         }
 
-        // Form submit handler
-        document.getElementById("customerForm").addEventListener("submit", function(e) {
-            e.preventDefault();
-            const name = document.getElementById("custName").value;
-            const email = document.getElementById("custEmail").value;
-            const phone = document.getElementById("custPhone").value;
-            const date = document.getElementById("custJoinDate").value;
+        // SIMPAN DATA PELANGGAN BARU
+        function saveCustomer() {
+            const name = document.getElementById("inputName").value.trim();
+            const email = document.getElementById("inputEmail").value.trim();
+            const phone = document.getElementById("inputPhone").value.trim();
 
-            const table = document.getElementById("customersTable");
-            const row = table.insertRow(-1);
-            row.innerHTML = `
-                <td class="customer-info">
-                    <img class="avatar" src="https://randomuser.me/api/portraits/lego/1.jpg">
-                    ${name} <br><span style="color:#888; font-size:13px;">ID: CUST${Math.floor(Math.random()*9999).toString().padStart(3,'0')}</span>
+            if (!name || !email || !phone) {
+                alert("Semua field wajib diisi!");
+                return;
+            }
+
+            const tbody = document.querySelector("#customersTable tbody");
+
+            const tr = document.createElement("tr");
+            tr.classList.add("border-b");
+
+            tr.innerHTML = `
+                <td class="px-6 py-3">${name}</td>
+                <td class="px-6 py-3">${email}</td>
+                <td class="px-6 py-3">${phone}</td>
+                <td class="px-6 py-3">
+                    <button onclick="deleteCustomer('${name}', this)" 
+                        class="text-red-600 hover:underline">Hapus</button>
                 </td>
-                <td>${email}<br><span style="color:#888; font-size:13px;">${phone}</span></td>
-                <td>${date}</td>
-                <td>0</td>
-                <td class="actions">
-                    <button class="btn-delete" onclick="deleteCustomer('${name}', this)" title="Hapus">
-                        <i class="fa fa-trash"></i>
-                    </button>
-                </td>`;
-            
-            modal.style.display = "none";
-            this.reset();
+            `;
 
-            // Tambah total pelanggan
-            const totalEl = document.getElementById("totalCustomers");
-            let total = parseInt(totalEl.textContent.replace(/,/g, ""));
-            total++;
-            totalEl.textContent = total.toLocaleString("id-ID");
+            tbody.appendChild(tr);
 
-            alert("Data pelanggan baru berhasil ditambahkan!");
-        });
+            closeModal();
+
+            // clear form
+            document.getElementById("inputName").value = "";
+            document.getElementById("inputEmail").value = "";
+            document.getElementById("inputPhone").value = "";
+        }
     </script>
+
 </body>
 </html>
