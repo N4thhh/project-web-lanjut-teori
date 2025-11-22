@@ -26,6 +26,13 @@
     {{-- Content --}}
     <main class="max-w-7xl mx-auto px-4 py-10 flex-grow w-full">
         
+        @if(session('success'))
+                <div class="mb-6 bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative shadow-md" role="alert">
+                    <strong class="font-bold">Berhasil!</strong>
+                    <span class="block sm:inline">{{ session('success') }}</span>
+                </div>
+            @endif
+            
         <div class="text-center mb-10">
             <h1 class="text-4xl font-bold text-gray-900 mb-3">Daftar Layanan Laundry</h1>
             <p class="text-lg text-gray-600 max-w-3xl mx-auto">
@@ -60,9 +67,15 @@
                             Rp {{ number_format($service->harga, 0, ',', '.') }}
                             <span class="text-sm font-normal text-gray-500">/kg</span>
                         </div>
-                        <a href="#" class="bg-primary text-white font-semibold px-5 py-2 rounded-lg hover:bg-primary-hover transition-colors">
-                            + Tambah
-                        </a>
+
+                        {{-- GANTI TOMBOL LAMA DENGAN FORM INI --}}
+                        <form action="{{ route('customer.cart.add', $service->id) }}" method="POST">
+                            @csrf
+                            <button type="submit" class="bg-primary text-white font-semibold px-5 py-2 rounded-lg hover:bg-primary-hover transition-colors flex items-center space-x-1 shadow-md">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path></svg>
+                                <span>Tambah</span>
+                            </button>
+                        </form>
                     </div>
                 </div>
                 @endforeach

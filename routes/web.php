@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\CustomerPageController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\AdminServiceController;
+use App\Http\Controllers\CartController;
 
 /*
 |--------------------------------------------------------------------------
@@ -91,6 +92,12 @@ Route::middleware(['auth','role:customer'])
 
         Route::get('/riwayat-pesanan', [CustomerPageController::class, 'riwayatPesanan'])
             ->name('riwayat-pesanan');
+
+        // === KERANJANG & CHECKOUT ===
+        Route::post('/keranjang/add/{id}', [CartController::class, 'addToCart'])->name('cart.add');
+        Route::delete('/keranjang/{id}', [CartController::class, 'destroy'])->name('cart.destroy');
+        Route::post('/checkout', [CartController::class, 'checkout'])->name('checkout');
+        Route::get('/keranjang', [CartController::class, 'index'])->name('cart.index');
 
         // ======================== PROFILE ========================
         Route::get('/profile', [CustomerPageController::class, 'profile'])->name('profile');
