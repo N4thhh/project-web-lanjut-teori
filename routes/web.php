@@ -19,7 +19,7 @@ Route::get('/', function () {
     return view('home');
 })->middleware('guest');
 
-// ==================== AUTH =====================
+// ==================== AUTH (GUEST) =====================
 Route::middleware('guest')->group(function () {
     Route::get('/register', [AuthController::class, 'showRegisterForm'])->name('register');
     Route::post('/register', [AuthController::class, 'register']);
@@ -28,23 +28,32 @@ Route::middleware('guest')->group(function () {
     Route::post('/login', [AuthController::class, 'login']);
 });
 
-Route::get('/logout', [AuthController::class, 'logout'])
-    ->middleware('auth')
-    ->name('logout');
+// ==================== AUTH (LOGGED IN) =====================
+Route::middleware('auth')->group(function () {
+    Route::get('/logout', [AuthController::class, 'logout'])->name('logout');
+
+    // === VERIFIKASI OTP ===
+    Route::get('/verify-otp', [AuthController::class, 'verifyNotice'])->name('verification.notice');
+    Route::post('/verify-otp', [AuthController::class, 'verifyProcess'])->name('verification.verify');
+});
 
 // ==================== HOME REDIRECT =====================
 Route::get('/home', function () {
-    if (!Auth::user()) {
+    $user = Auth::user();
+
+    if (!$user) {
         Auth::logout();
-        return redirect()->route('login')
-            ->withErrors(['email' => 'Sesi Anda telah berakhir.']);
+        return redirect()->route('login')->withErrors(['email' => 'Sesi Anda telah berakhir.']);
     }
 
-    return match (Auth::user()->role) {
+    if ($user->email_verified_at == null) {
+        return redirect()->route('verification.notice');
+    }
+
+    return match ($user->role) {
         'admin'    => redirect()->route('admin.dashboard'),
         'customer' => redirect()->route('customer.dashboard'),
-        default    => redirect()->route('login')
-                        ->withErrors(['email' => 'Akun Anda tidak memiliki peran yang valid.']),
+        default    => redirect()->route('login')->withErrors(['email' => 'Akun Anda tidak memiliki peran yang valid.']),
     };
 })->middleware('auth')->name('home');
 

@@ -18,6 +18,7 @@ return new class extends Migration
             $table->string('password');
             $table->string('role', 20);
             $table->text('address')->nullable();
+            $table->string('otp', 6)->nullable();
             $table->timestamps();
         });
     }
