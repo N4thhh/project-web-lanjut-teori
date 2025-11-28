@@ -12,12 +12,13 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('order_details', function (Blueprint $table) {
-            $table->uuid('id')->primary(); 
+            $table->uuid('id')->primary();
             $table->foreignUuid('order_id')->constrained('orders')->onDelete('cascade');
-            $table->foreignId('service_id')->constrained('laundry_services'); 
-            
-            $table->integer('jumlah');
-            $table->decimal('subtotal', 12, 2);
+            $table->foreignId('laundry_service_id')->constrained('laundry_services'); 
+            $table->decimal('harga_per_kg', 12, 2);
+            $table->decimal('jumlah', 10, 2)->default(0); 
+            $table->decimal('subtotal', 12, 2)->default(0);
+
             $table->timestamps();
         });
     }

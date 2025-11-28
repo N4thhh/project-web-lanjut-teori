@@ -15,10 +15,10 @@ return new class extends Migration
             $table->uuid('id')->primary();
             $table->foreignUuid('order_id')->constrained('orders')->onDelete('cascade');
             
-            $table->string('metode_pembayaran', 20);
+            $table->string('metode_pembayaran', 20)->nullable();
             $table->decimal('jumlah_bayar', 12, 2);
             $table->string('status', 20);
-            $table->timestamp('tanggal_bayar');
+            $table->timestamp('tanggal_bayar')->nullable();
             $table->timestamps();
         });
     }

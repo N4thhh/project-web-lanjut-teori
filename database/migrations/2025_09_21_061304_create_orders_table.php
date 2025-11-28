@@ -14,10 +14,11 @@ return new class extends Migration
         Schema::create('orders', function (Blueprint $table) {
             $table->uuid('id')->primary();
             $table->foreignUuId('users_id')->constrained('users')->onDelete('cascade');
-            $table->timestamp('tanggal_pesan');
-            $table->string('status', 20);
-            $table->decimal('total_harga', 12, 2);
-            $table->text('alamat');
+            $table->string('status_pesanan', 30)->default('menunggu_penjemputan'); 
+            $table->string('status_pembayaran', 30)->default('belum_bayar');       
+            $table->decimal('total_harga', 12, 2)->default(0);
+            $table->text('alamat'); 
+            
             $table->timestamps();
         });
     }
