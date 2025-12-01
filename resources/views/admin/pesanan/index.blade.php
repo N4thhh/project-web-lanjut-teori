@@ -84,7 +84,7 @@
                     <th>Tanggal</th>
                     <th>Status</th>
                     <th>Total</th>
-                    <th>Pembayaran</th>
+                    <th>Aksi</th>
                 </tr>
             </thead>
             <tbody>
@@ -111,6 +111,12 @@
                             @else
                                 <span class="pay-pending">Belum dibayar</span>
                             @endif
+                        </td>
+                        <td>
+                           <a href="{{ route('admin.orders.show', $order->id) }}"
+                              style="font-size:11px;text-decoration:none;color:#2563eb;font-weight:600;">
+                              Detail
+                            </a>
                         </td>
                     </tr>
                 @empty

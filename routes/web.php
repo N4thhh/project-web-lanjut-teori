@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\CustomerPageController;
-use App\Http\Controllers\OrderController; // ⬅️ TAMBAH INI
+use App\Http\Controllers\OrderController;
 
 /*
 |--------------------------------------------------------------------------
@@ -55,42 +55,48 @@ Route::get('/home', function() {
     return redirect()->route('login')->withErrors(['email' => 'Akun Anda tidak memiliki peran yang valid.']);
 })->middleware('auth')->name('home');
 
+
 // ======================= ADMIN ROUTES =======================
 
-Route::middleware('role:admin')->prefix('admin')->name('admin.')->group(function () {
+Route::middleware('role:admin')
+    ->prefix('admin')
+    ->name('admin.')
+    ->group(function () {
 
-    // Dashboard admin
-    Route::get('/dashboard', function() {
-        return view('admin.dashboard');
-    })->name('dashboard');
+        // Dashboard admin
+        Route::get('/dashboard', function() {
+            return view('admin.dashboard');
+        })->name('dashboard');
 
-    // ✅ Data Pesanan (Riwayat semua pesanan untuk admin)
-    Route::get('/pesanan', [OrderController::class, 'index'])->name('orders.index');
-    Route::get('/pesanan/{order}', [OrderController::class, 'show'])->name('orders.show');
-    Route::patch('/pesanan/{order}/status', [OrderController::class, 'updateStatus'])->name('orders.update-status');
-});
-Route::middleware('role:admin')->prefix('admin')->name('admin.')->group(function () {
-    Route::get('/dashboard', function() {
-        return view('admin.dashboard');
-    })->name('dashboard');
+        // Data Pesanan (riwayat semua pesanan untuk admin)
+        Route::get('/pesanan', [OrderController::class, 'index'])->name('orders.index');
+        Route::get('/pesanan/{order}', [OrderController::class, 'show'])->name('orders.show');
 
-    // Tambahkan baris ini:
-    Route::get('/pelanggan', function() {
-        return view('admin.pelanggan');
-    })->name('pelanggan');
-});
+        // ⬇️ Route untuk tombol "Simpan" ubah status
+        Route::patch('/pesanan/{order}/status', [OrderController::class, 'updateStatus'])
+            ->name('orders.update-status');
+
+        // Halaman pelanggan admin
+        Route::get('/pelanggan', function() {
+            return view('admin.pelanggan');
+        })->name('pelanggan');
+    });
 
 
 // ===================== CUSTOMER ROUTES ======================
 
-Route::middleware('role:customer')->prefix('customer')->name('customer.')->group(function () {
+Route::middleware('role:customer')
+    ->prefix('customer')
+    ->name('customer.')
+    ->group(function () {
 
-    // Dashboard customer
-    Route::get('/dashboard', [CustomerPageController::class, 'dashboard'])->name('dashboard');
+        // Dashboard customer
+        Route::get('/dashboard', [CustomerPageController::class, 'dashboard'])->name('dashboard');
 
-    // Halaman layanan
-    Route::get('/layanan', [CustomerPageController::class, 'layanan'])->name('layanan');
+        // Halaman layanan
+        Route::get('/layanan', [CustomerPageController::class, 'layanan'])->name('layanan');
 
-    // ✅ Riwayat pesanan milik customer yang login
-    Route::get('/riwayat-pesanan', [CustomerPageController::class, 'riwayatPesanan'])->name('riwayat-pesanan');
-});
+        // Riwayat pesanan milik customer yang login
+        Route::get('/riwayat-pesanan', [CustomerPageController::class, 'riwayatPesanan'])
+            ->name('riwayat-pesanan');
+    });

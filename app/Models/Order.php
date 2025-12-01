@@ -32,6 +32,10 @@ class Order extends Model
     {
         return $this->hasMany(OrderDetail::class, 'order_id');
     }
+    public function histories()
+    {
+    return $this->hasMany(OrderStatusHistory::class, 'order_id');
+}
 
     public function payment()
     {

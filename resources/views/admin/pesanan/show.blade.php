@@ -19,6 +19,15 @@
 <body>
 
 <div class="content">
+        {{-- TOMBOL KEMBALI --}}
+    <a href="{{ route('admin.orders.index') }}"
+       style="display:inline-flex; align-items:center; gap:6px; 
+              font-size:12px; color:#2563eb; text-decoration:none; 
+              margin-bottom:10px;">
+        &#8592; {{-- panah kiri --}}
+        <span>Kembali ke Data Pesanan</span>
+    </a>
+
     <h1>Detail Pesanan</h1>
     <div class="meta">
         ID: {{ $order->id }} •
@@ -86,8 +95,39 @@
             <option value="diambil" {{ $order->status=='diambil'?'selected':'' }}>Diambil</option>
             <option value="dibatalkan" {{ $order->status=='dibatalkan'?'selected':'' }}>Dibatalkan</option>
         </select>
+            <input type="text" name="catatan"
+           placeholder="Catatan (opsional, misal: kurir sudah jemput, 3 kg)"
+           style="flex:1; min-width:220px; padding:6px 8px; border-radius:8px; border:1px solid #d1d5db; font-size:11px;">
+
         <button type="submit" class="btn">Simpan</button>
     </form>
+    <h3 style="margin-top:24px; font-size:13px; color:#111827;">Riwayat Status Pesanan</h3>
+
+<table style="margin-top:8px;">
+    <thead>
+        <tr>
+            <th style="width: 160px;">Waktu</th>
+            <th>Status Lama</th>
+            <th>Status Baru</th>
+            <th>Catatan</th>
+        </tr>
+    </thead>
+    <tbody>
+        @forelse($order->histories as $history)
+            <tr>
+                <td>{{ $history->created_at->format('d M Y H:i') }}</td>
+                <td>{{ $history->status_lama ?? '-' }}</td>
+                <td>{{ $history->status_baru }}</td>
+                <td>{{ $history->catatan ?? '-' }}</td>
+            </tr>
+        @empty
+            <tr>
+                <td colspan="4">Belum ada riwayat status.</td>
+            </tr>
+        @endforelse
+    </tbody>
+</table>
+
 </div>
 
 </body>
