@@ -8,7 +8,7 @@ use App\Models\Payment;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
-class AdminOrderController extends Controller
+class   OrderController extends Controller
 {
     /**
      * Halaman daftar semua pesanan

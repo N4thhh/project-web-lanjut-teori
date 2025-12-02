@@ -95,7 +95,8 @@ class AuthController extends Controller
     }
     public function verifyNotice()
     {
-        return view('auth.verify-otp');
+//        return view('auth.verify-otp');
+        return redirect()->route('home');
     }
 
     public function verifyProcess(Request $request)
@@ -119,6 +120,7 @@ class AuthController extends Controller
             }
         }
 
-        return redirect()->back()->with('error', 'Kode OTP salah, silakan periksa email Anda lagi.');
+//        return redirect()->back()->with('error', 'Kode OTP salah, silakan periksa email Anda lagi.');
+
     }
 }

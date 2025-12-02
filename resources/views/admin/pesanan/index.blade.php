@@ -2,124 +2,137 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Data Pesanan - Admin LaundryKu</title>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        body {
-            font-family: 'Montserrat', Arial, sans-serif;
-            background: #f6f8fc;
-            margin: 0;
-        }
-        .content {
-            margin-left: 220px; /* mengikuti sidebar yang sama dengan dashboard */
-            padding: 40px 4vw 25px 4vw;
-        }
-        .page-title {
-            font-size: 25px;
-            color: #1746a0;
-            font-weight: 700;
-            margin-bottom: 8px;
-            letter-spacing: .5px;
-        }
-        .table-wrap {
-            margin-top: 24px;
-            background: #fff;
-            border-radius: 14px;
-            box-shadow: 0 4px 18px rgba(23,70,160,0.06);
-            padding: 18px 20px 12px;
-        }
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            font-size: 14px;
-        }
-        th, td {
-            padding: 10px 8px;
-            text-align: left;
-        }
-        th {
-            font-size: 12px;
-            text-transform: uppercase;
-            letter-spacing: .04em;
-            color: #9ca3af;
-            border-bottom: 1px solid #e5e7eb;
-        }
-        tr + tr {
-            border-bottom: 1px solid #f3f4f6;
-        }
-        .status-badge {
-            display: inline-block;
-            padding: 4px 10px;
-            border-radius: 999px;
-            font-size: 11px;
-            font-weight: 600;
-        }
-        .s-pending { background:#fef3c7; color:#92400e; }
-        .s-proses { background:#dbeafe; color:#1d4ed8; }
-        .s-selesai { background:#bbf7d0; color:#166534; }
-        .s-diambil { background:#ede9fe; color:#5b21b6; }
-        .s-dibatalkan { background:#fee2e2; color:#b91c1c; }
-        .pay-ok { color:#16a34a; font-size:11px; font-weight:600; }
-        .pay-pending { color:#f97316; font-size:11px; font-weight:500; }
-        .empty {
-            padding: 12px 0;
-            color: #9ca3af;
-            font-size: 13px;
-        }
+        body { font-family: 'Inter', sans-serif; }
     </style>
 </head>
-<body>
+<body class="bg-gray-50 text-gray-800">
 
-@include('includes.sidebar')
+<div class="flex h-screen overflow-hidden">
 
-<div class="content">
-    <div class="page-title">Data Pesanan</div>
+    {{-- SIDEBAR SAMA PERSIS DENGAN DASHBOARD --}}
+    @include('includes.sidebar')
 
-    <div class="table-wrap">
-        <table>
-            <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Pelanggan</th>
-                    <th>Tanggal</th>
-                    <th>Status</th>
-                    <th>Total</th>
-                    <th>Pembayaran</th>
-                </tr>
-            </thead>
-            <tbody>
-                @forelse($orders as $order)
-                    <tr>
-                        <td>{{ $order->id }}</td>
-                        <td>{{ $order->user->name ?? '-' }}</td>
-                        <td>{{ $order->created_at ? $order->created_at->format('d M Y H:i') : '-' }}</td>
-                        <td>
-                            @php $s = $order->status; @endphp
-                            <span class="status-badge
-                                {{ $s === 'pending' ? 's-pending' : '' }}
-                                {{ $s === 'proses' ? 's-proses' : '' }}
-                                {{ $s === 'selesai' ? 's-selesai' : '' }}
-                                {{ $s === 'diambil' ? 's-diambil' : '' }}
-                                {{ $s === 'dibatalkan' ? 's-dibatalkan' : '' }}">
-                                {{ ucfirst($s ?? '-') }}
-                            </span>
-                        </td>
-                        <td>Rp {{ number_format($order->total_harga ?? 0, 0, ',', '.') }}</td>
-                        <td>
-                            @if($order->payment)
-                                <span class="pay-ok">{{ ucfirst($order->payment->status) }}</span>
-                            @else
-                                <span class="pay-pending">Belum dibayar</span>
-                            @endif
-                        </td>
-                    </tr>
-                @empty
-                    <tr>
-                        <td colspan="6" class="empty">Belum ada pesanan.</td>
-                    </tr>
-                @endforelse
-            </tbody>
-        </table>
+    {{-- BAGIAN KANAN --}}
+    <div class="relative flex flex-col flex-1 overflow-y-auto overflow-x-hidden">
+
+        {{-- HEADER SAMA PERSIS DENGAN DASHBOARD --}}
+        <header class="bg-white border-b border-gray-200 sticky top-0 z-30">
+            <div class="flex items-center justify-between px-6 py-3">
+                <div class="flex items-center bg-gray-100 rounded-lg px-4 py-2 w-64">
+                    <svg class="w-5 h-5 text-gray-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                    </svg>
+                    <input type="text" placeholder="Cari..." class="bg-transparent border-none focus:outline-none text-sm w-full">
+                </div>
+                <div class="flex items-center space-x-4">
+                    <div class="flex items-center space-x-2">
+                        <img src="https://ui-avatars.com/api/?name=Admin&background=0D8ABC&color=fff" alt="Admin" class="w-8 h-8 rounded-full">
+                        <span class="text-sm font-medium text-gray-700">Admin</span>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        {{-- KONTEN UTAMA PESANAN --}}
+        <main class="w-full flex-grow p-6">
+            <h1 class="text-3xl font-bold text-gray-800 mb-6">Data Pesanan</h1>
+
+            <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+                <div class="px-6 py-4 border-b border-gray-100">
+                    <h3 class="font-semibold text-gray-800">Daftar Pesanan</h3>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-sm text-left text-gray-500">
+                        <thead class="text-xs text-gray-700 uppercase bg-gray-50">
+                            <tr>
+                                <th class="px-6 py-3">ID</th>
+                                <th class="px-6 py-3">Pelanggan</th>
+                                <th class="px-6 py-3">Tanggal</th>
+                                <th class="px-6 py-3">Status</th>
+                                <th class="px-6 py-3">Total</th>
+                                <th class="px-6 py-3">Pembayaran</th>
+                                <th class="px-6 py-3 text-right">Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @forelse($orders as $order)
+                                <tr class="bg-white border-b hover:bg-gray-50">
+                                    {{-- ID PESANAN --}}
+                                    <td class="px-6 py-4 font-medium text-gray-900">
+                                        #{{ $order->id }}
+                                    </td>
+
+                                    {{-- NAMA PELANGGAN --}}
+                                    <td class="px-6 py-4">
+                                        {{ $order->user->name ?? '-' }}
+                                    </td>
+
+                                    {{-- TANGGAL --}}
+                                    <td class="px-6 py-4">
+                                        {{ $order->created_at ? $order->created_at->format('d M Y H:i') : '-' }}
+                                    </td>
+
+                                    {{-- STATUS --}}
+                                    <td class="px-6 py-4">
+                                        @php $s = $order->status; @endphp
+                                        @php
+                                            $badgeClass = match($s) {
+                                                'pending'    => 'bg-yellow-100 text-yellow-800',
+                                                'proses'     => 'bg-blue-100 text-blue-800',
+                                                'selesai'    => 'bg-green-100 text-green-800',
+                                                'diambil'    => 'bg-purple-100 text-purple-800',
+                                                'dibatalkan' => 'bg-red-100 text-red-800',
+                                                default      => 'bg-gray-100 text-gray-800',
+                                            };
+                                        @endphp
+                                        <span class="text-xs font-medium px-2.5 py-0.5 rounded {{ $badgeClass }}">
+                                            {{ ucfirst($s ?? '-') }}
+                                        </span>
+                                    </td>
+
+                                    {{-- TOTAL HARGA --}}
+                                    <td class="px-6 py-4">
+                                        Rp {{ number_format($order->total_harga ?? 0, 0, ',', '.') }}
+                                    </td>
+
+                                    {{-- STATUS PEMBAYARAN --}}
+                                    <td class="px-6 py-4">
+                                        @if($order->payment)
+                                            <span class="text-xs font-semibold text-green-600">
+                                                {{ ucfirst($order->payment->status) }}
+                                            </span>
+                                        @else
+                                            <span class="text-xs font-medium text-orange-500">
+                                                Belum dibayar
+                                            </span>
+                                        @endif
+                                    </td>
+
+                                    {{-- AKSI --}}
+                                    <td class="px-6 py-4 text-right">
+                                        <a href="{{ route('admin.orders.show', $order) }}"
+                                           class="text-blue-600 hover:text-blue-800 text-xs font-medium">
+                                            Detail
+                                        </a>
+                                    </td>
+                                </tr>
+                            @empty
+                                <tr>
+                                    <td colspan="7" class="px-6 py-4 text-center text-sm text-gray-500">
+                                        Belum ada pesanan.
+                                    </td>
+                                </tr>
+                            @endforelse
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </main>
     </div>
 </div>
 

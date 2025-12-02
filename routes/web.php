@@ -46,9 +46,9 @@ Route::get('/home', function () {
         return redirect()->route('login')->withErrors(['email' => 'Sesi Anda telah berakhir.']);
     }
 
-    if ($user->email_verified_at == null) {
-        return redirect()->route('verification.notice');
-    }
+//    if ($user->email_verified_at == null) {
+//        return redirect()->route('verification.notice');
+//    }
 
     return match ($user->role) {
         'admin'    => redirect()->route('admin.dashboard'),
