@@ -108,10 +108,9 @@ class AuthController extends Controller
         $user = Auth::user();
 
         if ($request->otp == $user->otp) {
-            $user->update([
-                'email_verified_at' => Carbon::now(),
-                'otp' => null
-            ]);
+            $user->email_verified_at = Carbon::now();
+            $user->otp = null;
+            $user->save();
 
             if ($user->role === 'admin') {
                 return redirect()->route('admin.dashboard');
@@ -120,7 +119,7 @@ class AuthController extends Controller
             }
         }
 
-//        return redirect()->back()->with('error', 'Kode OTP salah, silakan periksa email Anda lagi.');
+        return redirect()->back()->with('error', 'Kode OTP salah, silakan periksa email Anda lagi.');
 
     }
 }

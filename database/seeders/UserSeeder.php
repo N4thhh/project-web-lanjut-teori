@@ -18,6 +18,7 @@ class UserSeeder extends Seeder
             'email' => 'admin@laundryku.com',
             'password' => Hash::make('password'),
             'role' => 'admin',
+            'email_verified_at' => now()
         ]);
 
         User::create([
@@ -25,6 +26,7 @@ class UserSeeder extends Seeder
             'email' => 'customer@laundryku.com',
             'password' => Hash::make('password'),
             'role' => 'customer',
+            'email_verified_at' => now()
         ]);
     }
 }
