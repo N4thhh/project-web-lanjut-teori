@@ -10,6 +10,17 @@
         body { font-family: 'Inter', sans-serif; }
     </style>
 </head>
+<script>
+function confirmUbahStatus(form) {
+    let ok = confirm("Yakin ingin mengubah status pesanan ini?");
+    if (ok) {
+        form.submit();
+    } else {
+        location.reload();
+    }
+}
+</script>
+
 <body class="bg-gray-50 text-gray-800">
 
 <div class="flex h-screen overflow-hidden">
@@ -36,6 +47,11 @@
                 </div>
             </div>
         </header>
+        @if(session('success'))
+        <div class="mb-4 bg-green-100 text-green-800 px-4 py-2 rounded-lg">
+            {{ session('success') }}
+        </div>
+        @endif
 
         {{-- KONTEN DETAIL --}}
         <main class="w-full flex-grow p-6 space-y-6">
@@ -78,9 +94,21 @@
                         @endphp
                         <div class="flex justify-between items-center">
                             <span class="text-gray-500">Status</span>
-                            <span class="px-2.5 py-0.5 rounded-full text-xs font-medium {{ $badgeClass }}">
-                                {{ ucfirst($s ?? '-') }}
-                            </span>
+
+                            <form action="{{ route('admin.orders.update-status', $order) }}" method="POST">
+                                @csrf
+                                @method('PATCH')
+
+                                <select name="status"
+                                        onchange="confirmUbahStatus(this.form)"
+                                        class="text-xs px-2 py-1 border rounded-lg bg-white">
+                                    <option value="pending"    {{ $order->status == 'pending' ? 'selected' : '' }}>Pending</option>
+                                    <option value="proses"     {{ $order->status == 'proses' ? 'selected' : '' }}>Proses</option>
+                                    <option value="selesai"    {{ $order->status == 'selesai' ? 'selected' : '' }}>Selesai</option>
+                                    <option value="diambil"    {{ $order->status == 'diambil' ? 'selected' : '' }}>Diambil</option>
+                                    <option value="dibatalkan" {{ $order->status == 'dibatalkan' ? 'selected' : '' }}>Dibatalkan</option>
+                                </select>
+                            </form>
                         </div>
 
                         <div class="flex justify-between">
@@ -190,7 +218,7 @@
                     </table>
                 </div>
             </div>
-
+  
         </main>
     </div>
 </div>
