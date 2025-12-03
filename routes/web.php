@@ -46,9 +46,9 @@ Route::get('/home', function () {
         return redirect()->route('login')->withErrors(['email' => 'Sesi Anda telah berakhir.']);
     }
 
-   if ($user->email_verified_at == null) {
-       return redirect()->route('verification.notice');
-   }
+//   if ($user->email_verified_at == null) {
+//       return redirect()->route('verification.notice');
+//   }
 
     return match ($user->role) {
         'admin'    => redirect()->route('admin.dashboard'),
@@ -80,6 +80,14 @@ Route::middleware(['auth','role:admin'])
         // ==================== PESANAN =====================
         Route::get('/pesanan', [OrderController::class, 'index'])->name('orders.index');
         Route::get('/pesanan/{order}', [OrderController::class, 'show'])->name('orders.show');
+
+        // form edit pesanan (status + berat)
+        Route::get('/pesanan/{order}/edit', [OrderController::class, 'edit'])->name('orders.edit');
+
+        // simpan perubahan pesanan
+        Route::patch('/pesanan/{order}', [OrderController::class, 'update'])->name('orders.update');
+
+        // route lama update status (kalau masih kepakai di tempat lain, biarkan)
         Route::patch('/pesanan/{order}/status', [OrderController::class, 'updateStatus'])->name('orders.update-status');
 
         // ==================== PELANGGAN =====================
