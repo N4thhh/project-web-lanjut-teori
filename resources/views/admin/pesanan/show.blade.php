@@ -10,17 +10,6 @@
         body { font-family: 'Inter', sans-serif; }
     </style>
 </head>
-<script>
-function confirmUbahStatus(form) {
-    let ok = confirm("Yakin ingin mengubah status pesanan ini?");
-    if (ok) {
-        form.submit();
-    } else {
-        location.reload();
-    }
-}
-</script>
-
 <body class="bg-gray-50 text-gray-800">
 
 <div class="flex h-screen overflow-hidden">
@@ -47,10 +36,18 @@ function confirmUbahStatus(form) {
                 </div>
             </div>
         </header>
+
+        {{-- NOTIFIKASI --}}
         @if(session('success'))
-        <div class="mb-4 bg-green-100 text-green-800 px-4 py-2 rounded-lg">
-            {{ session('success') }}
-        </div>
+            <div class="mx-6 mt-4 bg-green-100 text-green-800 px-4 py-2 rounded-lg">
+                {{ session('success') }}
+            </div>
+        @endif
+
+        @if($errors->has('status'))
+            <div class="mx-6 mt-4 bg-red-100 text-red-800 px-4 py-2 rounded-lg text-sm">
+                {{ $errors->first('status') }}
+            </div>
         @endif
 
         {{-- KONTEN DETAIL --}}
@@ -70,45 +67,81 @@ function confirmUbahStatus(form) {
                 </a>
             </div>
 
+            @php
+                $currentStatus = $order->status ?? 'pending';
+
+                // Aturan alur status:
+                $allowedFlow = [
+                    'pending'    => ['pending', 'proses', 'dibatalkan'],
+                    'proses'     => ['proses', 'selesai', 'dibatalkan'],
+                    'selesai'    => ['selesai', 'diambil'],
+                    'diambil'    => ['diambil'],
+                    'dibatalkan' => ['dibatalkan'],
+                ];
+
+                $allowedNext = $allowedFlow[$currentStatus] ?? ['pending', 'proses', 'dibatalkan'];
+
+                // kalau status sudah final (diambil / dibatalkan), select akan di-disable
+                $statusFinal = in_array($currentStatus, ['diambil', 'dibatalkan'], true);
+
+                $statusOptions = [
+                    'pending'    => 'Pending',
+                    'proses'     => 'Proses',
+                    'selesai'    => 'Selesai',
+                    'diambil'    => 'Diambil',
+                    'dibatalkan' => 'Dibatalkan',
+                ];
+
+                $s = $order->status;
+                $badgeClass = match($s) {
+                    'pending'    => 'bg-yellow-100 text-yellow-800',
+                    'proses'     => 'bg-blue-100 text-blue-800',
+                    'selesai'    => 'bg-green-100 text-green-800',
+                    'diambil'    => 'bg-purple-100 text-purple-800',
+                    'dibatalkan' => 'bg-red-100 text-red-800',
+                    default      => 'bg-gray-100 text-gray-800',
+                };
+            @endphp
+
             {{-- Kartu ringkasan --}}
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
                 {{-- Info pesanan --}}
                 <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-5 space-y-3">
                     <h2 class="text-sm font-semibold text-gray-700 mb-1">Informasi Pesanan</h2>
-                    <div class="text-sm text-gray-600 space-y-1">
+                    <div class="text-sm text-gray-600 space-y-2">
                         <div class="flex justify-between">
                             <span class="text-gray-500">Tanggal</span>
                             <span>{{ optional($order->created_at)->format('d M Y H:i') ?? '-' }}</span>
                         </div>
 
-                        @php $s = $order->status; @endphp
-                        @php
-                            $badgeClass = match($s) {
-                                'pending'    => 'bg-yellow-100 text-yellow-800',
-                                'proses'     => 'bg-blue-100 text-blue-800',
-                                'selesai'    => 'bg-green-100 text-green-800',
-                                'diambil'    => 'bg-purple-100 text-purple-800',
-                                'dibatalkan' => 'bg-red-100 text-red-800',
-                                default      => 'bg-gray-100 text-gray-800',
-                            };
-                        @endphp
-                        <div class="flex justify-between items-center">
+                        <div class="flex justify-between items-center gap-3">
                             <span class="text-gray-500">Status</span>
 
-                            <form action="{{ route('admin.orders.update-status', $order) }}" method="POST">
-                                @csrf
-                                @method('PATCH')
+                            <div class="flex items-center gap-2">
+                                {{-- Badge status saat ini --}}
+                                <span class="px-2.5 py-0.5 rounded-full text-xs font-medium {{ $badgeClass }}">
+                                    {{ ucfirst($s ?? '-') }}
+                                </span>
 
-                                <select name="status"
-                                        onchange="confirmUbahStatus(this.form)"
-                                        class="text-xs px-2 py-1 border rounded-lg bg-white">
-                                    <option value="pending"    {{ $order->status == 'pending' ? 'selected' : '' }}>Pending</option>
-                                    <option value="proses"     {{ $order->status == 'proses' ? 'selected' : '' }}>Proses</option>
-                                    <option value="selesai"    {{ $order->status == 'selesai' ? 'selected' : '' }}>Selesai</option>
-                                    <option value="diambil"    {{ $order->status == 'diambil' ? 'selected' : '' }}>Diambil</option>
-                                    <option value="dibatalkan" {{ $order->status == 'dibatalkan' ? 'selected' : '' }}>Dibatalkan</option>
-                                </select>
-                            </form>
+                                {{-- Dropdown ubah status --}}
+                                <form action="{{ route('admin.orders.update-status', $order) }}" method="POST">
+                                    @csrf
+                                    @method('PATCH')
+
+                                    <select name="status"
+                                            @if($statusFinal) disabled @endif
+                                            onchange="confirmUbahStatus(this.form)"
+                                            class="text-xs px-2 py-1 border rounded-lg bg-white disabled:bg-gray-100 disabled:text-gray-400">
+                                        @foreach($statusOptions as $value => $label)
+                                            <option value="{{ $value }}"
+                                                {{ $order->status == $value ? 'selected' : '' }}
+                                                {{ in_array($value, $allowedNext, true) ? '' : 'disabled' }}>
+                                                {{ $label }}
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                </form>
+                            </div>
                         </div>
 
                         <div class="flex justify-between">
@@ -218,10 +251,25 @@ function confirmUbahStatus(form) {
                     </table>
                 </div>
             </div>
-  
+
         </main>
     </div>
 </div>
+
+<script>
+function confirmUbahStatus(form) {
+    // kalau select-nya disabled (status final), jangan submit apa-apa
+    const select = form.querySelector('select');
+    if (!select || select.disabled) return;
+
+    let ok = confirm("Yakin ingin mengubah status pesanan ini?");
+    if (ok) {
+        form.submit();
+    } else {
+        window.location.reload();
+    }
+}
+</script>
 
 </body>
 </html>

@@ -110,23 +110,56 @@ class   OrderController extends Controller
     /**
      * Ubah status pesanan
      */
-    public function updateStatus(Request $request, Order $order)
-    {
-        $request->validate([
-            'status' => 'required|string'
-        ]);
+/**
+ * Ubah status pesanan
+ */
+public function updateStatus(Request $request, Order $order)
+{
+    $request->validate([
+        'status' => 'required|string',
+    ]);
 
-        // status lama
-        $old = $order->status;
-        $new = $request->status;
+    $current = $order->status;       // status sekarang di DB
+    $new     = $request->status;     // status yang diminta
 
-        // update order
-        $order->status = $new;
-        $order->save();
+    // Aturan alur status:
+    // - pending  -> pending, proses, dibatalkan
+    // - proses   -> proses, selesai, dibatalkan
+    // - selesai  -> selesai, diambil
+    // - diambil  -> diambil (final)
+    // - dibatalkan -> dibatalkan (final)
+    $allowedFlow = [
+        'pending'    => ['pending', 'proses', 'dibatalkan'],
+        'proses'     => ['proses', 'selesai', 'dibatalkan'],
+        'selesai'    => ['selesai', 'diambil'],
+        'diambil'    => ['diambil'],
+        'dibatalkan' => ['dibatalkan'],
+    ];
 
-        return redirect()
-            ->route('admin.orders.show', $order)
-            ->with('success', 'Status pesanan berhasil diperbarui');
+    // kalau status sekarang tidak dikenal, anggap pending
+    if (! isset($allowedFlow[$current])) {
+        $current = 'pending';
     }
+
+    // CEK: apakah status baru diizinkan dari status sekarang?
+    if (! in_array($new, $allowedFlow[$current], true)) {
+        return back()->withErrors([
+            'status' => 'Status tidak bisa diubah dari ' . ucfirst($current) . ' ke ' . ucfirst($new) . '.',
+        ]);
+    }
+
+    // kalau status sama, ga usah update apa-apa
+    if ($current === $new) {
+        return back()->with('success', 'Status pesanan tidak berubah.');
+    }
+
+    // update order
+    $order->status = $new;
+    $order->save();
+
+    return redirect()
+        ->route('admin.orders.show', $order)
+        ->with('success', 'Status pesanan berhasil diperbarui');
+}
 
 }
