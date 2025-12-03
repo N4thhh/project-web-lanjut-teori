@@ -95,7 +95,7 @@ class AuthController extends Controller
     }
     public function verifyNotice()
     {
-//        return view('auth.verify-otp');
+        return view('auth.verify-otp');
         return redirect()->route('home');
     }
 
