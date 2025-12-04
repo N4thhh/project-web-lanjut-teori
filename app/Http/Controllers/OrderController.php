@@ -32,6 +32,85 @@ class   OrderController extends Controller
         return view('admin.pesanan.show', compact('order'));
     }
 
+    public function edit(Order $order)
+{
+    $order->load([
+        'user',
+        'orderDetails.laundryService',
+        'payment',
+    ]);
+
+    return view('admin.pesanan.edit', compact('order'));
+}
+
+public function update(Request $request, Order $order)
+{
+    // validasi dasar
+    $request->validate([
+        'status' => 'required|string',
+        'details.*.berat' => 'nullable|numeric|min:0',
+    ]);
+
+    $current = $order->status_pesanan ?? 'pending';
+    $new     = $request->status;
+
+    // aturan alur status
+    $allowedFlow = [
+        'pending'    => ['pending', 'proses', 'dibatalkan'],
+        'proses'     => ['proses', 'selesai', 'dibatalkan'],
+        'selesai'    => ['selesai', 'diambil'],
+        'diambil'    => ['diambil'],
+        'dibatalkan' => ['dibatalkan'],
+    ];
+
+    if (! isset($allowedFlow[$current])) {
+        $current = 'pending';
+    }
+
+    // CEK: status tidak boleh mundur / lompat sembarangan
+    if (! in_array($new, $allowedFlow[$current], true)) {
+        return back()
+            ->withErrors([
+                'status' => 'Status tidak bisa diubah dari ' . ucfirst($current) . ' ke ' . ucfirst($new) . '.',
+            ])
+            ->withInput();
+    }
+
+    // update status
+    $order->status_pesanan = $new;
+    $order->save();
+
+    // update BERAT per detail (kalau ada di form)
+    if ($request->has('details')) {
+        foreach ($request->input('details') as $detailId => $detailData) {
+            $detail = $order->orderDetails()->whereKey($detailId)->first();
+            if (! $detail) continue;
+
+            if (isset($detailData['berat'])) {
+                $detail->berat = $detailData['berat'];
+
+                // kalau ada harga_satuan, hitung ulang subtotal
+                if (! is_null($detail->harga_satuan)) {
+                    $detail->subtotal = $detail->harga_satuan * (float) $detail->berat;
+                }
+
+                $detail->save();
+            }
+        }
+
+        // hitung ulang total_harga (opsional, kalau kolom ini ada)
+        if ($order->relationLoaded('orderDetails')) {
+            $order->load('orderDetails');
+        }
+        $order->total_harga = $order->orderDetails->sum('subtotal');
+        $order->save();
+    }
+
+    return redirect()
+        ->route('admin.orders.show', $order)
+        ->with('success', 'Pesanan berhasil diperbarui');
+}
+
     /**
      * Halaman form untuk update jumlah cucian (setelah penimbangan)
      */
@@ -71,7 +150,7 @@ class   OrderController extends Controller
                 
                 // Update detail
                 $detail->update([
-                    'jumlah' => $jumlah,
+                    'berat' => $jumlah,
                     'subtotal' => $subtotal,
                 ]);
 
@@ -119,7 +198,7 @@ public function updateStatus(Request $request, Order $order)
         'status' => 'required|string',
     ]);
 
-    $current = $order->status;       // status sekarang di DB
+    $current = $order->status_pesanan;       // status sekarang di DB
     $new     = $request->status;     // status yang diminta
 
     // Aturan alur status:
@@ -154,7 +233,7 @@ public function updateStatus(Request $request, Order $order)
     }
 
     // update order
-    $order->status = $new;
+    $order->status_pesanan = $new;
     $order->save();
 
     return redirect()

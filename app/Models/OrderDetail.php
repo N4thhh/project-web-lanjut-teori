@@ -19,8 +19,10 @@ class OrderDetail extends Model
         'order_id',
         'laundry_service_id',
         'harga_per_kg',
-        'jumlah',
-        'subtotal'
+        'berat',           // CHANGED from 'jumlah' to 'berat'
+        'subtotal',
+        'harga_satuan',    // Added from migration
+        'keterangan'       // Added from migration
     ];
 
     protected static function boot()
