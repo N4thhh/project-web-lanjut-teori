@@ -49,6 +49,26 @@
                 </thead>
                 <tbody class="divide-y divide-gray-100 bg-white">
                     @foreach($orders as $order)
+                        @php
+                            // Mapping status pesanan ke display text
+                            $statusDisplay = match($order->status_pesanan) {
+                                'menunggu_penjemputan' => 'Menunggu Penjemputan',
+                                'pending' => 'Pending',
+                                'proses' => 'Sedang Diproses',
+                                'selesai' => 'Selesai',
+                                'diambil' => 'Sudah Diambil',
+                                'dibatalkan' => 'Dibatalkan',
+                                default => 'Unknown'
+                            };
+
+                            // Mapping status pembayaran ke display text
+                            $pembayaranDisplay = match($order->status_pembayaran) {
+                                'belum_bayar' => 'Belum Bayar',
+                                'sudah_bayar' => 'Sudah Bayar',
+                                'lunas' => 'Lunas',
+                                default => 'Belum Bayar'
+                            };
+                        @endphp
                         <tr class="hover:bg-primary/5">
                             <td class="px-4 py-3 font-mono text-gray-800">{{ $order->id }}</td>
                             <td class="px-4 py-3 text-gray-700">
@@ -56,28 +76,27 @@
                             </td>
                             <td class="px-4 py-3">
                                 <span class="inline-flex px-2.5 py-1 rounded-full text-xs font-semibold
-                                    @if($order->status === 'pending') bg-yellow-100 text-yellow-700
-                                    @elseif($order->status === 'proses') bg-blue-100 text-blue-700
-                                    @elseif($order->status === 'selesai') bg-emerald-100 text-emerald-700
-                                    @elseif($order->status === 'diambil') bg-purple-100 text-purple-700
-                                    @elseif($order->status === 'dibatalkan') bg-red-100 text-red-600
+                                    @if($order->status_pesanan === 'menunggu_penjemputan') bg-yellow-100 text-yellow-700
+                                    @elseif($order->status_pesanan === 'pending') bg-yellow-100 text-yellow-700
+                                    @elseif($order->status_pesanan === 'proses') bg-blue-100 text-blue-700
+                                    @elseif($order->status_pesanan === 'selesai') bg-emerald-100 text-emerald-700
+                                    @elseif($order->status_pesanan === 'diambil') bg-purple-100 text-purple-700
+                                    @elseif($order->status_pesanan === 'dibatalkan') bg-red-100 text-red-600
                                     @else bg-gray-100 text-gray-600 @endif">
-                                    {{ ucfirst($order->status ?? 'unknown') }}
+                                    {{ $statusDisplay }}
                                 </span>
                             </td>
                             <td class="px-4 py-3 font-semibold text-gray-900">
                                 Rp {{ number_format($order->total_harga ?? 0, 0, ',', '.') }}
                             </td>
                             <td class="px-4 py-3">
-                                @if($order->payment)
-                                    <span class="text-emerald-600 text-xs font-semibold">
-                                        {{ ucfirst($order->payment->status) }}
-                                    </span>
-                                @else
-                                    <span class="text-orange-500 text-xs font-medium">
-                                        Belum dibayar
-                                    </span>
-                                @endif
+                                <span class="inline-flex px-2.5 py-1 rounded-full text-xs font-semibold
+                                    @if($order->status_pembayaran === 'belum_bayar') bg-orange-100 text-orange-600
+                                    @elseif($order->status_pembayaran === 'sudah_bayar') bg-emerald-100 text-emerald-700
+                                    @elseif($order->status_pembayaran === 'lunas') bg-emerald-100 text-emerald-700
+                                    @else bg-gray-100 text-gray-600 @endif">
+                                    {{ $pembayaranDisplay }}
+                                </span>
                             </td>
                         </tr>
                     @endforeach

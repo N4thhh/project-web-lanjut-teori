@@ -51,7 +51,7 @@ public function update(Request $request, Order $order)
         'details.*.berat' => 'nullable|numeric|min:0',
     ]);
 
-    $current = $order->status ?? 'pending';
+    $current = $order->status_pesanan ?? 'pending';
     $new     = $request->status;
 
     // aturan alur status
@@ -77,7 +77,7 @@ public function update(Request $request, Order $order)
     }
 
     // update status
-    $order->status = $new;
+    $order->status_pesanan = $new;
     $order->save();
 
     // update BERAT per detail (kalau ada di form)
@@ -150,7 +150,7 @@ public function update(Request $request, Order $order)
                 
                 // Update detail
                 $detail->update([
-                    'jumlah' => $jumlah,
+                    'berat' => $jumlah,
                     'subtotal' => $subtotal,
                 ]);
 
@@ -198,7 +198,7 @@ public function updateStatus(Request $request, Order $order)
         'status' => 'required|string',
     ]);
 
-    $current = $order->status;       // status sekarang di DB
+    $current = $order->status_pesanan;       // status sekarang di DB
     $new     = $request->status;     // status yang diminta
 
     // Aturan alur status:
@@ -233,7 +233,7 @@ public function updateStatus(Request $request, Order $order)
     }
 
     // update order
-    $order->status = $new;
+    $order->status_pesanan = $new;
     $order->save();
 
     return redirect()

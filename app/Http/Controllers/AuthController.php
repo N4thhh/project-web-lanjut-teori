@@ -95,8 +95,10 @@ class AuthController extends Controller
     }
     public function verifyNotice()
     {
+        if (Auth::user()->email_verified_at != null) {
+            return redirect()->route('home');
+        }
         return view('auth.verify-otp');
-        return redirect()->route('home');
     }
 
     public function verifyProcess(Request $request)
