@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Cart;
 use App\Models\Order;
 use App\Models\OrderDetail;
+use App\Models\Payment;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -36,7 +37,7 @@ class CartController extends Controller
             ]);
         }
 
-        return redirect()->back()->with('success', 'Layanan berhasil masuk keranjang!');
+        return redirect()->back()->with('success', 'Layanan berhasil ditambahkan ke keranjang!');
     }
 
     public function destroy($id)
@@ -44,7 +45,7 @@ class CartController extends Controller
         $deleted = Cart::where('id', $id)->where('user_id', Auth::id())->delete();
         
         if ($deleted) {
-            return redirect()->back()->with('success', 'Item dihapus dari keranjang.');
+            return redirect()->back()->with('success', 'Item berhasil dihapus dari keranjang.');
         }
         
         return redirect()->back()->with('error', 'Item tidak ditemukan.');
@@ -85,16 +86,16 @@ class CartController extends Controller
                 'address' => $address
             ]);
 
-            // Buat order
+            // Buat order dengan status menunggu_penjemputan
             $order = Order::create([
                 'users_id' => $user->id,
                 'status_pesanan' => 'menunggu_penjemputan',
                 'status_pembayaran' => 'belum_bayar',
-                'total_harga' => 0,
+                'total_harga' => 0, // Akan dihitung setelah ditimbang
                 'alamat' => $address,
             ]);
 
-            // Buat order details - CHANGED: jumlah -> berat
+            // Buat order details dengan berat = 0 (belum ditimbang)
             foreach ($carts as $cart) {
                 $hargaPerKg = $cart->service->harga;
                 
@@ -103,8 +104,8 @@ class CartController extends Controller
                     'laundry_service_id' => $cart->service_id,
                     'harga_per_kg' => $hargaPerKg,
                     'harga_satuan' => $hargaPerKg,
-                    'berat' => 0,
-                    'subtotal' => 0
+                    'berat' => 0, // Akan diisi admin setelah penimbangan
+                    'subtotal' => 0, // Akan dihitung setelah penimbangan
                 ]);
             }
 
@@ -114,7 +115,7 @@ class CartController extends Controller
             DB::commit();
 
             return redirect()->route('customer.riwayat-pesanan')
-                ->with('success', 'Pesanan berhasil dibuat! Kurir kami akan segera menjemput cucian Anda.');
+                ->with('success', 'Pesanan berhasil dibuat! Kurir kami akan segera menjemput cucian Anda di alamat yang telah ditentukan.');
                 
         } catch (\Exception $e) {
             DB::rollBack();

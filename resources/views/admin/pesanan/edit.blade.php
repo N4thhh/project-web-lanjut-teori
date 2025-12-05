@@ -11,95 +11,92 @@
 <body class="bg-gray-50 text-gray-800">
 
 <div class="flex h-screen overflow-hidden">
-
     @include('includes.sidebar')
 
     <div class="relative flex flex-col flex-1 overflow-y-auto overflow-x-hidden">
-
         <header class="bg-white border-b border-gray-200 sticky top-0 z-30">
-            <div class="flex items-center justify-between px-6 py-3">
-                <div class="flex items-center bg-gray-100 rounded-lg px-4 py-2 w-64">
-                    <input type="text" placeholder="Cari..." class="bg-transparent border-none focus:outline-none text-sm w-full">
-                </div>
-                <div class="flex items-center space-x-4">
-                    <span class="text-sm font-medium text-gray-700">Admin</span>
-                </div>
-            </div>
+            <div class="px-6 py-3"><span class="font-medium text-gray-700">Admin</span></div>
         </header>
 
         <main class="w-full flex-grow p-6 space-y-6">
-
             <div class="flex items-center justify-between mb-4">
                 <div>
                     <h1 class="text-3xl font-bold text-gray-800 mb-1">Edit Pesanan</h1>
-                    <p class="text-sm text-gray-500">ID Pesanan: <span class="font-mono">#{{ $order->id }}</span></p>
+                    <p class="text-sm text-gray-500">ID: <span class="font-mono">#{{ substr($order->id, 0, 8) }}</span></p>
                 </div>
-                <a href="{{ route('admin.orders.show', $order) }}" class="text-sm text-gray-600 hover:text-gray-800">&larr; Kembali ke Detail</a>
+                <a href="{{ route('admin.orders.show', $order) }}" class="text-sm text-gray-600 hover:text-gray-800">&larr; Kembali</a>
             </div>
 
             @if($errors->any())
                 <div class="bg-red-100 text-red-800 px-4 py-2 rounded-lg text-sm mb-4">
-                    <ul class="list-disc list-inside">
-                        @foreach($errors->all() as $err) <li>{{ $err }}</li> @endforeach
-                    </ul>
+                    <ul>@foreach($errors->all() as $err) <li>{{ $err }}</li> @endforeach</ul>
                 </div>
             @endif
 
-           @php
+            @php
                 $currentStatus = $order->status_pesanan ?? 'menunggu_penjemputan';
 
+                // Alur Baru
                 $allowedFlow = [
-                    'menunggu_penjemputan' => ['menunggu_penjemputan', 'proses', 'dibatalkan'],
-                    'pending'    => ['menunggu_penjemputan', 'proses', 'dibatalkan'],
-                    'proses'     => ['proses', 'selesai', 'dibatalkan'],
-                    'selesai'    => ['selesai', 'diambil'],
-                    'diambil'    => ['diambil'],
-                    'dibatalkan' => ['dibatalkan'],
+                    'menunggu_penjemputan' => ['menunggu_penjemputan', 'proses_penimbangan', 'dibatalkan'],
+                    'proses_penimbangan'   => ['proses_penimbangan', 'menunggu_pembayaran', 'dibatalkan'],
+                    'menunggu_pembayaran'  => ['menunggu_pembayaran', 'proses_pencucian', 'dibatalkan'],
+                    'proses_pencucian'     => ['proses_pencucian', 'pengiriman', 'selesai', 'dibatalkan'],
+                    'pengiriman'           => ['pengiriman', 'selesai'],
+                    'selesai'              => ['selesai', 'diambil'],
+                    'diambil'              => ['diambil'],
+                    'dibatalkan'           => ['dibatalkan'],
+                    // Fallback
+                    'pending' => ['menunggu_penjemputan', 'proses_penimbangan'],
+                    'proses'  => ['proses_penimbangan', 'menunggu_pembayaran'],
                 ];
 
-                $allowedNext = $allowedFlow[$currentStatus] ?? ['menunggu_penjemputan', 'proses', 'dibatalkan'];
+                $allowedNext = $allowedFlow[$currentStatus] ?? [];
 
+                // Opsi Status Baru
                 $statusOptions = [
-                    'menunggu_penjemputan' => 'Menunggu Penjemputan', // Ganti Pending jadi ini
-                    'proses'     => 'Proses',
-                    'selesai'    => 'Selesai',
-                    'diambil'    => 'Diambil',
-                    'dibatalkan' => 'Dibatalkan',
+                    'menunggu_penjemputan' => 'Menunggu Penjemputan',
+                    'proses_penimbangan'   => 'Proses Penimbangan',
+                    'menunggu_pembayaran'  => 'Menunggu Pembayaran',
+                    'proses_pencucian'     => 'Proses Pencucian',
+                    'pengiriman'           => 'Pengiriman',
+                    'selesai'              => 'Selesai',
+                    'diambil'              => 'Sudah Diambil',
+                    'dibatalkan'           => 'Dibatalkan',
                 ];
             @endphp
 
-            <form action="{{ route('admin.orders.update', $order) }}" method="POST" onsubmit="return confirmUpdate()">
+            <form action="{{ route('admin.orders.update', $order) }}" method="POST" onsubmit="return confirm('Simpan perubahan?')">
                 @csrf
                 @method('PATCH')
 
-                {{-- Status --}}
                 <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-5 mb-6">
                     <h2 class="text-sm font-semibold text-gray-700 mb-3">Update Status</h2>
                     <div class="flex items-center gap-4">
                         <span class="text-gray-500 text-sm">Status Saat Ini:</span>
                         <span class="text-sm font-semibold text-blue-600">
-                            {{ ucfirst(str_replace('_', ' ', $currentStatus)) }}
+                            {{ $statusOptions[$currentStatus] ?? ucfirst($currentStatus) }}
                         </span>
                     </div>
                     <div class="mt-3">
                         <label class="block text-sm text-gray-600 mb-1">Status Baru</label>
-                        <select name="status_pesanan" class="text-sm px-3 py-2 border rounded-lg bg-white w-full max-w-md">
+                        <select name="status" class="text-sm px-3 py-2 border rounded-lg bg-white w-full max-w-md">
                             @foreach($statusOptions as $value => $label)
                                 <option value="{{ $value }}"
-                                    {{ old('status_pesanan', $currentStatus) == $value ? 'selected' : '' }}
+                                    {{ old('status', $currentStatus) == $value ? 'selected' : '' }}
                                     {{ in_array($value, $allowedNext, true) ? '' : 'disabled' }}>
                                     {{ $label }}
                                 </option>
                             @endforeach
                         </select>
-                        <p class="text-xs text-gray-400 mt-1">Status hanya bisa maju sesuai alur sistem.</p>
+                        <p class="text-xs text-gray-400 mt-1">Status mengikuti alur sistem.</p>
                     </div>
                 </div>
 
-                {{-- Berat & item --}}
+                {{-- Bagian Berat Tetap Sama --}}
                 <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
                     <div class="px-6 py-4 border-b border-gray-100">
-                        <h2 class="font-semibold text-gray-800 text-sm">Update Berat & Item Layanan</h2>
+                        <h2 class="font-semibold text-gray-800 text-sm">Update Berat</h2>
                     </div>
                     <div class="overflow-x-auto">
                         <table class="w-full text-sm text-left text-gray-500">
@@ -138,14 +135,8 @@
                     </button>
                 </div>
             </form>
-
         </main>
     </div>
 </div>
-
-<script>
-function confirmUpdate() { return confirm("Simpan perubahan pesanan ini?"); }
-</script>
-
 </body>
 </html>

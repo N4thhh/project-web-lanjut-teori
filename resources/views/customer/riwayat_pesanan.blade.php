@@ -42,7 +42,7 @@
                     <tr>
                         <th class="px-4 py-3 text-left font-semibold text-gray-600">ID Pesanan</th>
                         <th class="px-4 py-3 text-left font-semibold text-gray-600">Tanggal</th>
-                        <th class="px-4 py-3 text-left font-semibold text-gray-600">Status</th>
+                        <th class="px-4 py-3 text-left font-semibold text-gray-600">Status Pesanan</th>
                         <th class="px-4 py-3 text-left font-semibold text-gray-600">Total</th>
                         <th class="px-4 py-3 text-left font-semibold text-gray-600">Pembayaran</th>
                     </tr>
@@ -50,55 +50,53 @@
                 <tbody class="divide-y divide-gray-100 bg-white">
                     @foreach($orders as $order)
                         @php
-                            // Mapping status pesanan ke display text
-                            $statusDisplay = match($order->status_pesanan) {
+                            // 1. Mapping Label Status (Sesuai Alur Baru)
+                            $statusLabel = match($order->status_pesanan) {
                                 'menunggu_penjemputan' => 'Menunggu Penjemputan',
-                                'pending' => 'Pending',
-                                'proses' => 'Sedang Diproses',
-                                'selesai' => 'Selesai',
-                                'diambil' => 'Sudah Diambil',
-                                'dibatalkan' => 'Dibatalkan',
-                                default => 'Unknown'
+                                'proses_penimbangan'   => 'Sedang Ditimbang',
+                                'menunggu_pembayaran'  => 'Menunggu Pembayaran',
+                                'proses_pencucian'     => 'Sedang Dicuci',
+                                'pengiriman'           => 'Sedang Dikirim',
+                                'selesai'              => 'Selesai',
+                                'diambil'              => 'Sudah Diambil',
+                                'dibatalkan'           => 'Dibatalkan',
+                                default                => ucfirst(str_replace('_', ' ', $order->status_pesanan))
                             };
 
-                            // Mapping status pembayaran ke display text
-                            $pembayaranDisplay = match($order->status_pembayaran) {
-                                'belum_bayar' => 'Belum Bayar',
-                                'sudah_bayar' => 'Sudah Bayar',
-                                'lunas' => 'Lunas',
-                                default => 'Belum Bayar'
+                            // 2. Mapping Warna Badge Status
+                            $statusClass = match($order->status_pesanan) {
+                                'menunggu_penjemputan' => 'bg-yellow-100 text-yellow-700',
+                                'proses_penimbangan'   => 'bg-orange-100 text-orange-700',
+                                'menunggu_pembayaran'  => 'bg-red-100 text-red-700',
+                                'proses_pencucian'     => 'bg-blue-100 text-blue-700',
+                                'pengiriman'           => 'bg-indigo-100 text-indigo-700',
+                                'selesai'              => 'bg-green-100 text-green-700',
+                                'diambil'              => 'bg-purple-100 text-purple-700',
+                                'dibatalkan'           => 'bg-gray-200 text-gray-700',
+                                default                => 'bg-gray-100 text-gray-600'
                             };
                         @endphp
-                        <tr class="hover:bg-primary/5">
-                            <td class="px-4 py-3 font-mono text-gray-800">{{ $order->id }}</td>
+
+                        <tr class="hover:bg-primary/5 transition">
+                            <td class="px-4 py-3 font-mono text-gray-800">
+                                #{{ substr($order->id, 0, 8) }}
+                            </td>
                             <td class="px-4 py-3 text-gray-700">
                                 {{ $order->created_at ? $order->created_at->format('d M Y H:i') : '-' }}
                             </td>
                             <td class="px-4 py-3">
-                                <span class="inline-flex px-2.5 py-1 rounded-full text-xs font-semibold
-                                    @if($order->status_pesanan === 'menunggu_penjemputan') bg-yellow-100 text-yellow-700
-                                    @elseif($order->status_pesanan === 'pending') bg-yellow-100 text-yellow-700
-                                    @elseif($order->status_pesanan === 'proses') bg-blue-100 text-blue-700
-                                    @elseif($order->status_pesanan === 'selesai') bg-emerald-100 text-emerald-700
-                                    @elseif($order->status_pesanan === 'diambil') bg-purple-100 text-purple-700
-                                    @elseif($order->status_pesanan === 'dibatalkan') bg-red-100 text-red-600
-                                    @else bg-gray-100 text-gray-600 @endif">
-                                    {{ $statusDisplay }}
+                                <span class="inline-flex px-2.5 py-1 rounded-full text-xs font-semibold {{ $statusClass }}">
+                                    {{ $statusLabel }}
                                 </span>
                             </td>
                             <td class="px-4 py-3 font-semibold text-gray-900">
                                 Rp {{ number_format($order->total_harga ?? 0, 0, ',', '.') }}
                             </td>
                             <td class="px-4 py-3">
-<td class="px-4 py-3">
-                                {{-- LOGIKA TOMBOL BAYAR --}}
-                                @if($order->status_pesanan !== 'menunggu_penjemputan' && 
-                                    $order->status_pesanan !== 'pending' && 
-                                    $order->status_pesanan !== 'dibatalkan' && 
-                                    $order->status_pembayaran === 'belum_bayar' &&
-                                    $order->total_harga > 0)
+                                {{-- LOGIKA TOMBOL BAYAR (Update Alur Baru) --}}
+                                @if($order->status_pesanan === 'menunggu_pembayaran' && $order->status_pembayaran === 'belum_bayar')
                                     
-                                    {{-- Tombol muncul jika sudah ditimbang (bukan menunggu/pending) & belum bayar --}}
+                                    {{-- Tombol Muncul HANYA saat status 'menunggu_pembayaran' --}}
                                     <a href="{{ route('customer.payment.show', $order->id) }}" 
                                        class="inline-block bg-blue-500 text-white px-3 py-1 rounded text-xs font-bold hover:bg-blue-600 transition shadow-sm">
                                        Bayar Sekarang
@@ -109,13 +107,15 @@
                                         Menunggu Verifikasi
                                     </span>
                                 
+                                @elseif($order->status_pembayaran === 'lunas')
+                                    <span class="inline-flex px-2.5 py-1 rounded-full text-xs font-semibold bg-green-100 text-green-700">
+                                        Lunas
+                                    </span>
+
                                 @else
-                                    {{-- Tampilkan Badge Status Pembayaran Biasa --}}
-                                    <span class="inline-flex px-2.5 py-1 rounded-full text-xs font-semibold
-                                        @if($order->status_pembayaran === 'lunas') bg-green-100 text-green-700
-                                        @else bg-orange-100 text-orange-600 @endif">
-                                        {{-- Fallback tampilan teks --}}
-                                        {{ $order->status_pembayaran == 'belum_bayar' ? 'Belum Bayar' : ucfirst($order->status_pembayaran) }}
+                                    {{-- Fallback (Belum bayar tapi belum waktunya bayar) --}}
+                                    <span class="inline-flex px-2.5 py-1 rounded-full text-xs font-semibold bg-orange-100 text-orange-600">
+                                        Belum Bayar
                                     </span>
                                 @endif
                             </td>

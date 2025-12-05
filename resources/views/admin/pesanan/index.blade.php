@@ -79,25 +79,26 @@
 
                                     {{-- STATUS --}}
                                     <td class="px-6 py-4">
-                                        @php $s = $order->status_pesanan; @endphp
-                                        @php
+                                        @php 
+                                            $s = $order->status_pesanan ?? 'menunggu_penjemputan';
                                             $badgeClass = match($s) {
-                                                'menunggu_penjemputan' => 'bg-yellow-100 text-yellow-800', // Tambah ini
-                                                'pending'    => 'bg-yellow-100 text-yellow-800',
-                                                'proses'     => 'bg-blue-100 text-blue-800',
+                                                'menunggu_penjemputan' => 'bg-yellow-100 text-yellow-800',
+                                                'proses_penimbangan'   => 'bg-orange-100 text-orange-800', // Baru
+                                                'menunggu_pembayaran'  => 'bg-red-100 text-red-800',       // Baru (Penting!)
+                                                'proses_pencucian'     => 'bg-blue-100 text-blue-800',     // Baru
+                                                'pengiriman'           => 'bg-indigo-100 text-indigo-800', // Baru
                                                 'selesai'    => 'bg-green-100 text-green-800',
                                                 'diambil'    => 'bg-purple-100 text-purple-800',
-                                                'dibatalkan' => 'bg-red-100 text-red-800',
+                                                'dibatalkan' => 'bg-gray-200 text-gray-800',
                                                 default      => 'bg-gray-100 text-gray-800',
                                             };
-                                            
-                                            $label = ($s == 'menunggu_penjemputan') ? 'Menunggu Penjemputan' : ucfirst($s);
+                                            $label = ucwords(str_replace('_', ' ', $s));
                                         @endphp
                                         <span class="text-xs font-medium px-2.5 py-0.5 rounded {{ $badgeClass }}">
                                             {{ $label }}
                                         </span>
                                     </td>
-
+                                        
                                     {{-- TOTAL HARGA --}}
                                     <td class="px-6 py-4">
                                         Rp {{ number_format($order->total_harga ?? 0, 0, ',', '.') }}

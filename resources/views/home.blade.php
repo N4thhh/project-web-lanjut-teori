@@ -200,7 +200,7 @@
                 <ul class="mt-4 space-y-2 text-sm">
                     <li><a href="#" class="text-blue-50 hover:text-white">Cuci Kering</a></li>
                     <li><a href="#" class="text-blue-50 hover:text-white">Cuci Setrika</a></li>
-                    <li><a href="#" class-="text-blue-50 hover:text-white">Cuci Lipat</a></li>
+                    <li><a href="#" class="text-blue-50 hover:text-white">Cuci Lipat</a></li>
                     <li><a href="#" class="text-blue-50 hover:text-white">Cuci Basah</a></li>
                 </ul>
             </div>
