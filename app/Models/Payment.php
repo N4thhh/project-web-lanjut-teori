@@ -22,6 +22,7 @@ class Payment extends Model
         'jumlah_bayar',
         'status',
         'tanggal_bayar',
+        'bukti_pembayaran',
     ];
 
     protected $casts = [

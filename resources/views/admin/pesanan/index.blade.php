@@ -79,9 +79,10 @@
 
                                     {{-- STATUS --}}
                                     <td class="px-6 py-4">
-                                        @php $s = $order->status; @endphp
+                                        @php $s = $order->status_pesanan; @endphp
                                         @php
                                             $badgeClass = match($s) {
+                                                'menunggu_penjemputan' => 'bg-yellow-100 text-yellow-800', // Tambah ini
                                                 'pending'    => 'bg-yellow-100 text-yellow-800',
                                                 'proses'     => 'bg-blue-100 text-blue-800',
                                                 'selesai'    => 'bg-green-100 text-green-800',
@@ -89,9 +90,11 @@
                                                 'dibatalkan' => 'bg-red-100 text-red-800',
                                                 default      => 'bg-gray-100 text-gray-800',
                                             };
+                                            
+                                            $label = ($s == 'menunggu_penjemputan') ? 'Menunggu Penjemputan' : ucfirst($s);
                                         @endphp
                                         <span class="text-xs font-medium px-2.5 py-0.5 rounded {{ $badgeClass }}">
-                                            {{ ucfirst($s ?? '-') }}
+                                            {{ $label }}
                                         </span>
                                     </td>
 

@@ -90,13 +90,34 @@
                                 Rp {{ number_format($order->total_harga ?? 0, 0, ',', '.') }}
                             </td>
                             <td class="px-4 py-3">
-                                <span class="inline-flex px-2.5 py-1 rounded-full text-xs font-semibold
-                                    @if($order->status_pembayaran === 'belum_bayar') bg-orange-100 text-orange-600
-                                    @elseif($order->status_pembayaran === 'sudah_bayar') bg-emerald-100 text-emerald-700
-                                    @elseif($order->status_pembayaran === 'lunas') bg-emerald-100 text-emerald-700
-                                    @else bg-gray-100 text-gray-600 @endif">
-                                    {{ $pembayaranDisplay }}
-                                </span>
+<td class="px-4 py-3">
+                                {{-- LOGIKA TOMBOL BAYAR --}}
+                                @if($order->status_pesanan !== 'menunggu_penjemputan' && 
+                                    $order->status_pesanan !== 'pending' && 
+                                    $order->status_pesanan !== 'dibatalkan' && 
+                                    $order->status_pembayaran === 'belum_bayar' &&
+                                    $order->total_harga > 0)
+                                    
+                                    {{-- Tombol muncul jika sudah ditimbang (bukan menunggu/pending) & belum bayar --}}
+                                    <a href="{{ route('customer.payment.show', $order->id) }}" 
+                                       class="inline-block bg-blue-500 text-white px-3 py-1 rounded text-xs font-bold hover:bg-blue-600 transition shadow-sm">
+                                       Bayar Sekarang
+                                    </a>
+
+                                @elseif($order->status_pembayaran === 'sudah_bayar')
+                                    <span class="text-xs text-blue-600 font-semibold bg-blue-50 px-2 py-1 rounded border border-blue-100">
+                                        Menunggu Verifikasi
+                                    </span>
+                                
+                                @else
+                                    {{-- Tampilkan Badge Status Pembayaran Biasa --}}
+                                    <span class="inline-flex px-2.5 py-1 rounded-full text-xs font-semibold
+                                        @if($order->status_pembayaran === 'lunas') bg-green-100 text-green-700
+                                        @else bg-orange-100 text-orange-600 @endif">
+                                        {{-- Fallback tampilan teks --}}
+                                        {{ $order->status_pembayaran == 'belum_bayar' ? 'Belum Bayar' : ucfirst($order->status_pembayaran) }}
+                                    </span>
+                                @endif
                             </td>
                         </tr>
                     @endforeach

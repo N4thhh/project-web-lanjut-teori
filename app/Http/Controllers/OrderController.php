@@ -44,72 +44,65 @@ class   OrderController extends Controller
 }
 
 public function update(Request $request, Order $order)
-{
-    // validasi dasar
-    $request->validate([
-        'status' => 'required|string',
-        'details.*.berat' => 'nullable|numeric|min:0',
-    ]);
+    {
+        // validasi dasar
+        $request->validate([
+            'status' => 'required|string',
+            'details.*.berat' => 'nullable|numeric|min:0',
+        ]);
 
-    $current = $order->status_pesanan ?? 'pending';
-    $new     = $request->status;
+        $current = $order->status_pesanan ?? 'menunggu_penjemputan';
+        $new     = $request->status;
 
-    // aturan alur status
-    $allowedFlow = [
-        'pending'    => ['pending', 'proses', 'dibatalkan'],
-        'proses'     => ['proses', 'selesai', 'dibatalkan'],
-        'selesai'    => ['selesai', 'diambil'],
-        'diambil'    => ['diambil'],
-        'dibatalkan' => ['dibatalkan'],
-    ];
+        $allowedFlow = [
+            'menunggu_penjemputan' => ['menunggu_penjemputan', 'proses', 'dibatalkan'],
+            'pending'              => ['menunggu_penjemputan', 'proses', 'dibatalkan'],
+            'proses'     => ['proses', 'selesai', 'dibatalkan'],
+            'selesai'    => ['selesai', 'diambil'],
+            'diambil'    => ['diambil'],
+            'dibatalkan' => ['dibatalkan'],
+        ];
 
-    if (! isset($allowedFlow[$current])) {
-        $current = 'pending';
-    }
-
-    // CEK: status tidak boleh mundur / lompat sembarangan
-    if (! in_array($new, $allowedFlow[$current], true)) {
-        return back()
-            ->withErrors([
-                'status' => 'Status tidak bisa diubah dari ' . ucfirst($current) . ' ke ' . ucfirst($new) . '.',
-            ])
-            ->withInput();
-    }
-
-    // update status
-    $order->status_pesanan = $new;
-    $order->save();
-
-    // update BERAT per detail (kalau ada di form)
-    if ($request->has('details')) {
-        foreach ($request->input('details') as $detailId => $detailData) {
-            $detail = $order->orderDetails()->whereKey($detailId)->first();
-            if (! $detail) continue;
-
-            if (isset($detailData['berat'])) {
-                $detail->berat = $detailData['berat'];
-
-                // kalau ada harga_satuan, hitung ulang subtotal
-                if (! is_null($detail->harga_satuan)) {
-                    $detail->subtotal = $detail->harga_satuan * (float) $detail->berat;
-                }
-
-                $detail->save();
-            }
+        if (! isset($allowedFlow[$current])) {
+            $current = 'menunggu_penjemputan';
         }
 
-        // hitung ulang total_harga (opsional, kalau kolom ini ada)
-        if ($order->relationLoaded('orderDetails')) {
-            $order->load('orderDetails');
+        // CEK: status tidak boleh mundur / lompat sembarangan
+        if (! in_array($new, $allowedFlow[$current], true)) {
+            return back()
+                ->withErrors([
+                    'status' => 'Status tidak bisa diubah dari ' . ucfirst(str_replace('_', ' ', $current)) . ' ke ' . ucfirst($new) . '.',
+                ])
+                ->withInput();
         }
-        $order->total_harga = $order->orderDetails->sum('subtotal');
+
+        // update status
+        $order->status_pesanan = $new; // Pastikan ini status_pesanan
         $order->save();
-    }
 
-    return redirect()
-        ->route('admin.orders.show', $order)
-        ->with('success', 'Pesanan berhasil diperbarui');
-}
+        // 6. Update Berat (Logic tetap sama)
+        if ($request->has('details')) {
+            foreach ($request->input('details') as $detailId => $detailData) {
+                $detail = $order->orderDetails()->whereKey($detailId)->first();
+                if ($detail && isset($detailData['berat'])) {
+                    $detail->berat = $detailData['berat'];
+                    if (! is_null($detail->harga_satuan)) {
+                        $detail->subtotal = $detail->harga_satuan * (float) $detail->berat;
+                    }
+                    $detail->save();
+                }
+            }
+            if ($order->relationLoaded('orderDetails')) {
+                $order->load('orderDetails');
+            }
+            $order->total_harga = $order->orderDetails->sum('subtotal');
+            $order->save();
+        }
+
+        return redirect()
+            ->route('admin.orders.show', $order)
+            ->with('success', 'Pesanan berhasil diperbarui');
+    }
 
     /**
      * Halaman form untuk update jumlah cucian (setelah penimbangan)
@@ -195,11 +188,11 @@ public function update(Request $request, Order $order)
 public function updateStatus(Request $request, Order $order)
 {
     $request->validate([
-        'status' => 'required|string',
+        'status_pesanan' => 'required|string',
     ]);
 
     $current = $order->status_pesanan;       // status sekarang di DB
-    $new     = $request->status;     // status yang diminta
+    $new     = $request->status_pesanan;     // status yang diminta
 
     // Aturan alur status:
     // - pending  -> pending, proses, dibatalkan
@@ -223,7 +216,7 @@ public function updateStatus(Request $request, Order $order)
     // CEK: apakah status baru diizinkan dari status sekarang?
     if (! in_array($new, $allowedFlow[$current], true)) {
         return back()->withErrors([
-            'status' => 'Status tidak bisa diubah dari ' . ucfirst($current) . ' ke ' . ucfirst($new) . '.',
+            'status_pesanan' => 'Status tidak bisa diubah dari ' . ucfirst($current) . ' ke ' . ucfirst($new) . '.',
         ]);
     }
 
@@ -240,5 +233,27 @@ public function updateStatus(Request $request, Order $order)
         ->route('admin.orders.show', $order)
         ->with('success', 'Status pesanan berhasil diperbarui');
 }
+
+public function verifyPayment(Order $order)
+    {
+        $order->load('payment');
+
+        if (!$order->payment) {
+            return back()->with('error', 'Data pembayaran tidak ditemukan.');
+        }
+
+        // Update status payment jadi lunas
+        $order->payment->update([
+            'status' => 'lunas',
+            'tanggal_bayar' => now() // update tanggal bayar verifikasi
+        ]);
+
+        // Update status order jadi lunas
+        $order->update([
+            'status_pembayaran' => 'lunas'
+        ]);
+
+        return back()->with('success', 'Pembayaran diverifikasi LUNAS.');
+    }
 
 }

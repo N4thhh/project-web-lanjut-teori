@@ -90,6 +90,9 @@ Route::middleware(['auth','role:admin'])
         // route lama update status (kalau masih kepakai)
         Route::patch('/pesanan/{order}/status', [OrderController::class, 'updateStatus'])->name('orders.update-status');
 
+        // verifikasi pembayaran
+        Route::post('/pesanan/{order}/verify-payment', [App\Http\Controllers\OrderController::class, 'verifyPayment'])->name('orders.verify-payment');
+
         // ==================== PELANGGAN =====================
         Route::get('/pelanggan', function () {
             return view('admin.pelanggan');
@@ -115,6 +118,10 @@ Route::middleware(['auth','role:customer'])
         Route::delete('/keranjang/{id}', [CartController::class, 'destroy'])->name('cart.destroy');
         Route::post('/checkout', [CartController::class, 'checkout'])->name('checkout');
         Route::get('/keranjang', [CartController::class, 'index'])->name('cart.index');
+        
+        // === PEMBAYARAN ===
+        Route::get('/pesanan/{id}/bayar', [App\Http\Controllers\PaymentController::class, 'show'])->name('payment.show');
+        Route::post('/pesanan/{id}/bayar', [App\Http\Controllers\PaymentController::class, 'process'])->name('payment.process');
 
         // ======================== PROFILE ========================
         Route::get('/profile', [CustomerPageController::class, 'profile'])->name('profile');

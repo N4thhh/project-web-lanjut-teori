@@ -73,42 +73,48 @@
                 </div>
             </div>
 
-            @php
-                $s = $order->status;
-                $badgeClass = match($s) {
-                    'pending'    => 'bg-yellow-100 text-yellow-800',
-                    'proses'     => 'bg-blue-100 text-blue-800',
-                    'selesai'    => 'bg-green-100 text-green-800',
-                    'diambil'    => 'bg-purple-100 text-purple-800',
-                    'dibatalkan' => 'bg-red-100 text-red-800',
-                    default      => 'bg-gray-100 text-gray-800',
-                };
-            @endphp
-
-            {{-- Kartu ringkasan --}}
-            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                {{-- Info pesanan --}}
-                <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-5 space-y-3">
-                    <h2 class="text-sm font-semibold text-gray-700 mb-1">Informasi Pesanan</h2>
-                    <div class="text-sm text-gray-600 space-y-2">
-                        <div class="flex justify-between">
-                            <span class="text-gray-500">Tanggal</span>
-                            <span>{{ optional($order->created_at)->format('d M Y H:i') ?? '-' }}</span>
-                        </div>
-
-                        <div class="flex justify-between items-center gap-3">
+            <div class="flex justify-between items-center gap-3">
                             <span class="text-gray-500">Status</span>
+                            {{-- UBAH: logic php dipindah inline atau diatas --}}
+                            @php
+                                $s = $order->status_pesanan; // UBAH: status_pesanan
+                                $badgeClass = match($s) {
+                                    'menunggu_penjemputan' => 'bg-yellow-100 text-yellow-800', // Tambah ini
+                                    'pending'    => 'bg-yellow-100 text-yellow-800',
+                                    'proses'     => 'bg-blue-100 text-blue-800',
+                                    'selesai'    => 'bg-green-100 text-green-800',
+                                    'diambil'    => 'bg-purple-100 text-purple-800',
+                                    'dibatalkan' => 'bg-red-100 text-red-800',
+                                    default      => 'bg-gray-100 text-gray-800',
+                                };
+                                $label = ($s == 'menunggu_penjemputan') ? 'Menunggu Penjemputan' : ucfirst($s);
+                            @endphp
                             <span class="px-2.5 py-0.5 rounded-full text-xs font-medium {{ $badgeClass }}">
-                                {{ ucfirst($s ?? '-') }}
+                                {{ $label }}
                             </span>
                         </div>
 
-                        <div class="flex justify-between">
-                            <span class="text-gray-500">Total</span>
-                            <span class="font-semibold">
-                                Rp {{ number_format($order->total_harga ?? 0, 0, ',', '.') }}
-                            </span>
-                        </div>
+                <div class="text-sm text-gray-600 space-y-2">
+                    {{-- TANGGAL --}}
+                    <div class="flex justify-between">
+                        <span class="text-gray-500">Tanggal</span>
+                        <span>{{ optional($order->created_at)->format('d M Y H:i') ?? '-' }}</span>
+                    </div>
+
+                    {{-- STATUS (YANG DIPERBAIKI) --}}
+                    <div class="flex justify-between items-center gap-3">
+                        <span class="text-gray-500">Status</span>
+                        <span class="px-2.5 py-0.5 rounded-full text-xs font-medium {{ $badgeClass }}">
+                            {{ $label }}
+                        </span>
+                    </div>
+
+                    {{-- TOTAL --}}
+                    <div class="flex justify-between">
+                        <span class="text-gray-500">Total</span>
+                        <span class="font-semibold">
+                            Rp {{ number_format($order->total_harga ?? 0, 0, ',', '.') }}
+                        </span>
                     </div>
                 </div>
 
@@ -210,7 +216,45 @@
                     </table>
                 </div>
             </div>
-
+        <div class="mt-8 bg-white p-6 rounded-lg shadow border">
+            <h3 class="text-lg font-bold mb-4">Verifikasi Pembayaran</h3>
+                    
+            @if($order->payment && $order->payment->bukti_pembayaran)
+                <div class="flex flex-col md:flex-row gap-6">
+                    <div class="w-full md:w-1/3">
+                        <p class="text-sm text-gray-500 mb-2">Bukti Upload:</p>
+                        <a href="{{ asset('storage/' . $order->payment->bukti_pembayaran) }}" target="_blank">
+                            <img src="{{ asset('storage/' . $order->payment->bukti_pembayaran) }}" class="w-full rounded border hover:opacity-90">
+                        </a>
+                    </div>
+                    
+                    <div class="w-full md:w-2/3">
+                        <p class="mb-2">Metode: <strong>{{ $order->payment->metode_pembayaran }}</strong></p>
+                        <p class="mb-4">Status Saat Ini: 
+                            <span class="px-2 py-1 rounded text-xs font-bold 
+                                {{ $order->status_pembayaran == 'lunas' ? 'bg-green-100 text-green-700' : 'bg-yellow-100 text-yellow-700' }}">
+                                {{ strtoupper($order->status_pembayaran) }}
+                            </span>
+                        </p>
+                    
+                        @if($order->status_pembayaran !== 'lunas')
+                            <form action="{{ route('admin.orders.verify-payment', $order->id) }}" method="POST">
+                                @csrf
+                                <button type="submit" class="bg-green-600 text-white px-4 py-2 rounded shadow hover:bg-green-700" onclick="return confirm('Yakin validasi pembayaran ini?')">
+                                    ✅ Verifikasi Lunas
+                                </button>
+                            </form>
+                        @else
+                            <div class="p-3 bg-green-50 text-green-700 rounded border border-green-200">
+                                Pembayaran sudah diverifikasi.
+                            </div>
+                        @endif
+                    </div>
+                </div>
+            @else
+            <p class="text-gray-500 italic">Belum ada bukti pembayaran yang diupload customer.</p>
+            @endif
+        </div>
         </main>
     </div>
 </div>
