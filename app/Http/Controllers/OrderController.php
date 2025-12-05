@@ -98,10 +98,12 @@ class OrderController extends Controller
 
             if ($totalHarga > 0) {
                 $payment = Payment::firstOrNew(['order_id' => $order->id]);
+                
                 $payment->jumlah_bayar = $totalHarga;
+
                 if (! $payment->exists) {
                     $payment->status = 'belum_bayar';
-                    $payment->metode_pembayaran = 'cash';
+                    $payment->metode_pembayaran = 'belum_dipilih'; 
                 }
 
                 $payment->save();
@@ -146,7 +148,7 @@ class OrderController extends Controller
                 [
                     'jumlah_bayar' => $totalHarga,
                     'status' => 'belum_bayar',
-                    'metode_pembayaran' => 'cash', 
+                    'metode_pembayaran' => 'belum_dipilih', 
                 ]
             );
 
