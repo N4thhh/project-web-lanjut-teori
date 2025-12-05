@@ -6,27 +6,69 @@ use App\Models\LaundryService;
 use App\Models\Order;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\Validator;
-
 
 class CustomerPageController extends Controller
 {
+    // ==============================
+    //  DASHBOARD
+    // ==============================
     public function dashboard()
     {
-        return view('customer.dashboard', ['activeMenu' => 'dashboard']);
+        $userId = Auth::id();
+
+        // Kolom status pesanan yang BENAR pada tabel orders
+        $statusColumn = 'status_pesanan';
+
+        // Total pesanan
+        $totalOrders = Order::where('users_id', $userId)->count();
+
+        // Pesanan aktif
+        $activeOrders = Order::where('users_id', $userId)
+            ->whereIn($statusColumn, [
+                'menunggu_penjemputan',
+                'diproses',
+                'siap-diambil',
+                'dikirim'
+            ])
+            ->count();
+
+        // Pesanan selesai
+        $completedOrders = Order::where('users_id', $userId)
+            ->where($statusColumn, 'selesai')
+            ->count();
+
+        // 3 pesanan terbaru
+        $latestOrders = Order::where('users_id', $userId)
+            ->orderByDesc('created_at')
+            ->take(3)
+            ->get();
+
+        return view('customer.dashboard', [
+            'activeMenu'      => 'dashboard',
+            'totalOrders'     => $totalOrders,
+            'activeOrders'    => $activeOrders,
+            'completedOrders' => $completedOrders,
+            'latestOrders'    => $latestOrders,
+        ]);
     }
 
+    // ==============================
+    //  LAYANAN
+    // ==============================
     public function layanan()
     {
         $layanan = LaundryService::all();
-        
+
         return view('customer.layanan', [
             'services' => $layanan,
             'activeMenu' => 'layanan'
         ]);
     }
 
+    // ==============================
+    //  RIWAYAT PESANAN
+    // ==============================
     public function riwayatPesanan()
     {
         $orders = Order::with(['orderDetails.laundryService', 'payment'])
@@ -36,53 +78,58 @@ class CustomerPageController extends Controller
 
         return view('customer.riwayat_pesanan', [
             'orders' => $orders,
-            'activeMenu' => 'riwayat-pesanan',
+            'activeMenu' => 'riwayat_pesanan',
         ]);
     }
+
+    // ==============================
+    //  DETAIL PESANAN (TAMBAHAN)
+    // ==============================
+    public function orderDetail($id)
+    {
+        // Tidak menampilkan detail — langsung arahkan ke riwayat
+        return redirect()->route('customer.riwayat_pesanan');
+    }
+
+    // ==============================
+    //  PROFILE
+    // ==============================
     public function profile()
     {
-    $user = Auth::user();
+        $user = Auth::user();
 
-    // Tentukan status akun dari kolom yang umum
-    $accountStatus = 'aktif';
-    if (Schema::hasColumn('users', 'is_active')) {
-        $accountStatus = $user->is_active ? 'aktif' : 'non-aktif';
-    } elseif (Schema::hasColumn('users', 'status')) {
-        $val = strtolower((string) $user->status);
-        $accountStatus = in_array($val, ['1','true','aktif','active']) ? 'aktif' : 'non-aktif';
-    } elseif (Schema::hasColumn('users', 'active')) {
-        $accountStatus = $user->active ? 'aktif' : 'non-aktif';
+        // Status akun → default aktif
+        $accountStatus = 'aktif';
+
+        return view('customer.profile', [
+            'user'          => $user,
+            'accountStatus' => $accountStatus,
+            'activeMenu'    => 'profile',
+        ]);
     }
 
-    return view('customer.profile', [
-        'user'          => $user,
-        'accountStatus' => $accountStatus,
-        'activeMenu'    => 'profile',
-    ]);
-    }
-
+    // ==============================
+    //  UPDATE PROFILE
+    // ==============================
     public function updateProfile(Request $request)
     {
-    $user = Auth::user();
+        $user = Auth::user();
 
-    // Validasi sederhana
-    $validator = Validator::make($request->all(), [
-        'name'  => ['required', 'string', 'max:100'],
-        'email' => ['nullable', 'email', 'max:255'],
-    ]);
+        $validator = Validator::make($request->all(), [
+            'name'  => ['required', 'string', 'max:100'],
+            'email' => ['nullable', 'email', 'max:255'],
+        ]);
 
-    $validated = $validator->validate();
+        $validated = $validator->validate();
 
-    $user->name = $validated['name'];
+        $user->name = $validated['name'];
 
-    // Kalau email diisi, update; kalau kosong, biarkan email lama
-    if (!empty($validated['email'])) {
-        $user->email = $validated['email'];
+        if (!empty($validated['email'])) {
+            $user->email = $validated['email'];
+        }
+
+        $user->save();
+
+        return back()->with('success', 'Akun berhasil diperbarui.');
     }
-
-    $user->save();
-
-    return back()->with('success', 'Akun berhasil diperbarui.');
-    }
-
 }

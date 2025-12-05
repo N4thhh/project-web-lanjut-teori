@@ -114,7 +114,7 @@ class CartController extends Controller
 
             DB::commit();
 
-            return redirect()->route('customer.riwayat-pesanan')
+            return redirect()->route('customer.riwayat_pesanan')
                 ->with('success', 'Pesanan berhasil dibuat! Kurir kami akan segera menjemput cucian Anda di alamat yang telah ditentukan.');
                 
         } catch (\Exception $e) {

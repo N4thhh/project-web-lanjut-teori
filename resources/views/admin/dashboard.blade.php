@@ -12,112 +12,144 @@
 </head>
 <body class="bg-gray-50 text-gray-800">
 
-    <div class="flex h-screen overflow-hidden">
+<div class="flex h-screen overflow-hidden">
 
-        @include('includes.sidebar')
+    @include('includes.sidebar')
 
-        <div class="relative flex flex-col flex-1 overflow-y-auto overflow-x-hidden">
-            
-            <header class="bg-white border-b border-gray-200 sticky top-0 z-30">
-                <div class="flex items-center justify-between px-6 py-3">
-                    <div class="flex items-center bg-gray-100 rounded-lg px-4 py-2 w-64">
-                        <svg class="w-5 h-5 text-gray-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
-                        </svg>
-                        <input type="text" placeholder="Cari..." class="bg-transparent border-none focus:outline-none text-sm w-full">
-                    </div>
-                    <div class="flex items-center space-x-4">
-                        <div class="flex items-center space-x-2">
-                            <img src="https://ui-avatars.com/api/?name=Admin&background=0D8ABC&color=fff" alt="Admin" class="w-8 h-8 rounded-full">
-                            <span class="text-sm font-medium text-gray-700">Admin</span>
-                        </div>
-                    </div>
+    <div class="relative flex flex-col flex-1 overflow-y-auto overflow-x-hidden">
+        
+        <header class="bg-white border-b border-gray-200 sticky top-0 z-30">
+            <div class="flex items-center justify-between px-6 py-3">
+                <div class="flex items-center bg-gray-100 rounded-lg px-4 py-2 w-64">
+                    <svg class="w-5 h-5 text-gray-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                    </svg>
+                    <input type="text" placeholder="Cari..." class="bg-transparent border-none focus:outline-none text-sm w-full">
                 </div>
-            </header>
 
-            <main class="w-full flex-grow p-6">
-                <h1 class="text-3xl font-bold text-gray-800 mb-6">Dashboard</h1>
+                <div class="flex items-center space-x-2">
+                    <img src="https://ui-avatars.com/api/?name=Admin&background=0D8ABC&color=fff" class="w-8 h-8 rounded-full">
+                    <span class="text-sm font-medium text-gray-700">Admin</span>
+                </div>
+            </div>
+        </header>
 
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-                    <div class="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
-                        <div class="flex justify-between items-start">
-                            <div>
-                                <p class="text-xs font-medium text-gray-500 uppercase">Total Pendapatan</p>
-                                <h3 class="text-2xl font-bold text-gray-800 mt-1">Rp 12.500.000</h3>
-                            </div>
-                            <div class="p-2 bg-green-50 rounded-lg">
-                                <svg class="w-6 h-6 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                                </svg>
-                            </div>
+        <main class="w-full flex-grow p-6">
+            <h1 class="text-3xl font-bold text-gray-800 mb-6">Dashboard</h1>
+
+            <!-- CARD SECTION -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                
+                <!-- Total Pendapatan -->
+                <div class="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <p class="text-xs font-medium text-gray-500 uppercase">Total Pendapatan</p>
+                            <h3 class="text-2xl font-bold text-gray-800 mt-1">
+                                Rp {{ number_format($totalPendapatan, 0, ',', '.') }}
+                            </h3>
                         </div>
-                    </div>
-
-                    <div class="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
-                        <div class="flex justify-between items-start">
-                            <div>
-                                <p class="text-xs font-medium text-gray-500 uppercase">Pesanan Baru</p>
-                                <h3 class="text-2xl font-bold text-gray-800 mt-1">24</h3>
-                            </div>
-                            <div class="p-2 bg-blue-50 rounded-lg">
-                                <svg class="w-6 h-6 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path>
-                                </svg>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
-                        <div class="flex justify-between items-start">
-                            <div>
-                                <p class="text-xs font-medium text-gray-500 uppercase">Pelanggan Aktif</p>
-                                <h3 class="text-2xl font-bold text-gray-800 mt-1">156</h3>
-                            </div>
-                            <div class="p-2 bg-purple-50 rounded-lg">
-                                <svg class="w-6 h-6 text-purple-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
-                                </svg>
-                            </div>
+                        <div class="p-2 bg-green-50 rounded-lg">
+                            <svg class="w-6 h-6 text-green-500" fill="none" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1">
+                                </path>
+                            </svg>
                         </div>
                     </div>
                 </div>
 
-                <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
-                    <div class="px-6 py-4 border-b border-gray-100">
-                        <h3 class="font-semibold text-gray-800">Pesanan Terbaru</h3>
-                    </div>
-                    <div class="overflow-x-auto">
-                        <table class="w-full text-sm text-left text-gray-500">
-                            <thead class="text-xs text-gray-700 uppercase bg-gray-50">
-                                <tr>
-                                    <th class="px-6 py-3">ID Pesanan</th>
-                                    <th class="px-6 py-3">Pelanggan</th>
-                                    <th class="px-6 py-3">Layanan</th>
-                                    <th class="px-6 py-3">Status</th>
-                                    <th class="px-6 py-3">Total</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr class="bg-white border-b hover:bg-gray-50">
-                                    <td class="px-6 py-4 font-medium text-gray-900">#ORD-001</td>
-                                    <td class="px-6 py-4">Budi Santoso</td>
-                                    <td class="px-6 py-4">Cuci Komplit</td>
-                                    <td class="px-6 py-4"><span class="bg-green-100 text-green-800 text-xs font-medium px-2.5 py-0.5 rounded">Selesai</span></td>
-                                    <td class="px-6 py-4">Rp 45.000</td>
-                                </tr>
-                                <tr class="bg-white border-b hover:bg-gray-50">
-                                    <td class="px-6 py-4 font-medium text-gray-900">#ORD-002</td>
-                                    <td class="px-6 py-4">Siti Aminah</td>
-                                    <td class="px-6 py-4">Setrika Saja</td>
-                                    <td class="px-6 py-4"><span class="bg-yellow-100 text-yellow-800 text-xs font-medium px-2.5 py-0.5 rounded">Proses</span></td>
-                                    <td class="px-6 py-4">Rp 20.000</td>
-                                </tr>
-                            </tbody>
-                        </table>
+                <!-- Pesanan Baru -->
+                <div class="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <p class="text-xs font-medium text-gray-500 uppercase">Pesanan Baru</p>
+                            <h3 class="text-2xl font-bold text-gray-800 mt-1">{{ $pesananBaru }}</h3>
+                        </div>
+                        <div class="p-2 bg-blue-50 rounded-lg">
+                            <svg class="w-6 h-6 text-blue-500" fill="none" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path>
+                            </svg>
+                        </div>
                     </div>
                 </div>
-            </main>
-        </div>
+
+                <!-- Pelanggan Aktif -->
+                <div class="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <p class="text-xs font-medium text-gray-500 uppercase">Pelanggan Aktif</p>
+                            <h3 class="text-2xl font-bold text-gray-800 mt-1">{{ $pelangganAktif }}</h3>
+                        </div>
+                        <div class="p-2 bg-purple-50 rounded-lg">
+                            <svg class="w-6 h-6 text-purple-500" fill="none" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z">
+                                </path>
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- PESANAN TERBARU -->
+            <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+                <div class="px-6 py-4 border-b border-gray-100">
+                    <h3 class="font-semibold text-gray-800">Pesanan Terbaru</h3>
+                </div>
+
+                <div class="overflow-x-auto">
+                    <table class="w-full text-sm text-left text-gray-500">
+                        <thead class="text-xs text-gray-700 uppercase bg-gray-50">
+                            <tr>
+                                <th class="px-6 py-3">ID Pesanan</th>
+                                <th class="px-6 py-3">Pelanggan</th>
+                                <th class="px-6 py-3">Layanan</th>
+                                <th class="px-6 py-3">Status</th>
+                                <th class="px-6 py-3">Total</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+                            @forelse($pesananTerbaru as $order)
+                            <tr class="bg-white border-b hover:bg-gray-50">
+                                <td class="px-6 py-4 font-medium text-gray-900">
+                                    #{{ strtoupper(substr($order->id, 0, 8)) }}
+                                </td>
+
+                                <td class="px-6 py-4">{{ $order->user->name ?? '-' }}</td>
+
+                                <!-- Karena tidak ada relasi service -->
+                                <td class="px-6 py-4">-</td>
+
+                                <td class="px-6 py-4">
+                                    <span class="bg-blue-100 text-blue-800 text-xs font-medium px-2.5 py-0.5 rounded">
+                                        {{ $order->status_pesanan }}
+                                    </span>
+                                </td>
+
+                                <td class="px-6 py-4">
+                                    Rp {{ number_format($order->total_harga, 0, ',', '.') }}
+                                </td>
+                            </tr>
+                            @empty
+                            <tr>
+                                <td colspan="5" class="text-center py-4 text-gray-500">
+                                    Belum ada pesanan.
+                                </td>
+                            </tr>
+                            @endforelse
+                        </tbody>
+
+                    </table>
+                </div>
+            </div>
+
+        </main>
     </div>
+</div>
+
 </body>
 </html>

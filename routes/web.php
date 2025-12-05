@@ -7,6 +7,7 @@ use App\Http\Controllers\CustomerPageController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\AdminServiceController;
 use App\Http\Controllers\CartController;
+use App\Http\Controllers\PaymentController;
 
 /*
 |--------------------------------------------------------------------------
@@ -53,10 +54,9 @@ Route::get('/home', function () {
     return match ($user->role) {
         'admin'    => redirect()->route('admin.dashboard'),
         'customer' => redirect()->route('customer.dashboard'),
-        default    => redirect()->route('login')->withErrors(['email' => 'Akun Anda tidak memiliki peran yang valid.']),
+        default    => redirect()->route('login')->withErrors(['email' => 'Akun Anda tidak memiliki peran valid.']),
     };
 })->middleware('auth')->name('home');
-
 
 // ==================== ADMIN ROUTES =====================
 Route::middleware(['auth','role:admin'])
@@ -65,40 +65,29 @@ Route::middleware(['auth','role:admin'])
     ->group(function () {
 
         // Dashboard
-        Route::get('/dashboard', function () {
-            return view('admin.dashboard');
-        })->name('dashboard');
+        Route::get('/dashboard', [AdminServiceController::class, 'dashboard'])->name('dashboard');
 
-        // ==================== LAYANAN =====================
-        Route::get('/layanan',        [AdminServiceController::class, 'index'])->name('layanan');
+        // Layanan
+        Route::get('/layanan', [AdminServiceController::class, 'index'])->name('layanan');
         Route::get('/layanan/create', [AdminServiceController::class, 'create'])->name('layanan.create');
-        Route::post('/layanan',       [AdminServiceController::class, 'store'])->name('layanan.store');
+        Route::post('/layanan', [AdminServiceController::class, 'store'])->name('layanan.store');
         Route::get('/layanan/{id}/edit', [AdminServiceController::class, 'edit'])->name('layanan.edit');
-        Route::put('/layanan/{id}',      [AdminServiceController::class, 'update'])->name('layanan.update');
-        Route::delete('/layanan/{id}',   [AdminServiceController::class, 'destroy'])->name('layanan.destroy');
+        Route::put('/layanan/{id}', [AdminServiceController::class, 'update'])->name('layanan.update');
+        Route::delete('/layanan/{id}', [AdminServiceController::class, 'destroy'])->name('layanan.destroy');
 
-        // ==================== PESANAN =====================
+        // Pesanan
         Route::get('/pesanan', [OrderController::class, 'index'])->name('orders.index');
         Route::get('/pesanan/{order}', [OrderController::class, 'show'])->name('orders.show');
-
-        // form edit pesanan (status + berat)
         Route::get('/pesanan/{order}/edit', [OrderController::class, 'edit'])->name('orders.edit');
-
-        // simpan perubahan pesanan
         Route::patch('/pesanan/{order}', [OrderController::class, 'update'])->name('orders.update');
-
-        // route lama update status (kalau masih kepakai)
         Route::patch('/pesanan/{order}/status', [OrderController::class, 'updateStatus'])->name('orders.update-status');
+        Route::post('/pesanan/{order}/verify-payment', [OrderController::class, 'verifyPayment'])->name('orders.verify-payment');
 
-        // verifikasi pembayaran
-        Route::post('/pesanan/{order}/verify-payment', [App\Http\Controllers\OrderController::class, 'verifyPayment'])->name('orders.verify-payment');
-
-        // ==================== PELANGGAN =====================
+        // Pelanggan
         Route::get('/pelanggan', function () {
             return view('admin.pelanggan');
         })->name('pelanggan');
     });
-
 
 // ==================== CUSTOMER ROUTES =====================
 Route::middleware(['auth','role:customer'])
@@ -106,26 +95,32 @@ Route::middleware(['auth','role:customer'])
     ->name('customer.')
     ->group(function () {
 
+        // Dashboard
         Route::get('/dashboard', [CustomerPageController::class, 'dashboard'])->name('dashboard');
 
+        // Layanan
         Route::get('/layanan', [CustomerPageController::class, 'layanan'])->name('layanan');
 
+        // Riwayat Pesanan
         Route::get('/riwayat-pesanan', [CustomerPageController::class, 'riwayatPesanan'])
-            ->name('riwayat-pesanan');
+            ->name('riwayat_pesanan'); // <-- pastikan pakai underscore agar sama dengan Blade
 
-        // === KERANJANG & CHECKOUT ===
+        // Detail Pesanan
+        Route::get('/pesanan/{id}', [CustomerPageController::class, 'orderDetail'])->name('order.detail');
+
+        // Keranjang
         Route::post('/keranjang/add/{id}', [CartController::class, 'addToCart'])->name('cart.add');
         Route::delete('/keranjang/{id}', [CartController::class, 'destroy'])->name('cart.destroy');
-        Route::post('/checkout', [CartController::class, 'checkout'])->name('checkout');
         Route::get('/keranjang', [CartController::class, 'index'])->name('cart.index');
-        
-        // === PEMBAYARAN ===
-        Route::get('/pesanan/{id}/bayar', [App\Http\Controllers\PaymentController::class, 'show'])->name('payment.show');
-        Route::post('/pesanan/{id}/bayar', [App\Http\Controllers\PaymentController::class, 'process'])->name('payment.process');
 
-        // ======================== PROFILE ========================
+        // Checkout
+        Route::post('/checkout', [CartController::class, 'checkout'])->name('checkout');
+
+        // Pembayaran
+        Route::get('/pesanan/{id}/bayar', [PaymentController::class, 'show'])->name('payment.show');
+        Route::post('/pesanan/{id}/bayar', [PaymentController::class, 'process'])->name('payment.process');
+
+        // Profil
         Route::get('/profile', [CustomerPageController::class, 'profile'])->name('profile');
-
-        Route::post('/profile/update', [CustomerPageController::class, 'updateProfile'])
-            ->name('profile.update');
+        Route::post('/profile/update', [CustomerPageController::class, 'updateProfile'])->name('profile.update');
     });

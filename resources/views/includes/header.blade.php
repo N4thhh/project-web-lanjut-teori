@@ -30,9 +30,9 @@
         </a>
 
         {{-- Riwayat Pesanan --}}
-        <a href="{{ route('customer.riwayat-pesanan') }}"
+        <a href="{{ route('customer.riwayat_pesanan') }}"
            class="flex items-center space-x-2 px-3 py-2 rounded-xl font-semibold transition
-           {{ (isset($activeMenu) && $activeMenu === 'riwayat') || Route::is('customer.riwayat-pesanan') ? 'bg-primary/10 text-primary' : 'text-gray-600 hover:text-primary' }}">
+           {{ (isset($activeMenu) && $activeMenu === 'riwayat') || Route::is('customer.riwayat_pesanan') ? 'bg-primary/10 text-primary' : 'text-gray-600 hover:text-primary' }}">
             <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
                 <path d="M9 12l2 2 4-4M7 20h10a2 2 0 002-2V6a2 2 0 00-2-2H7a2 2 0 00-2 2v12a2 2 0 002 2z"/>
             </svg>
