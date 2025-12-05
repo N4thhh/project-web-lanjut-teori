@@ -84,7 +84,9 @@ Route::middleware(['auth','role:admin'])
         Route::post('/pesanan/{order}/verify-payment', [OrderController::class, 'verifyPayment'])->name('orders.verify-payment');
 
         // Pelanggan
-        Route::get('/pelanggan', [AdminServiceController::class, 'pelanggan'])->name('pelanggan');
+        Route::get('/pelanggan', [AdminServiceController::class, 'pelanggan'])->name('pelanggan'); // tampil data pelanggan
+        Route::post('/pelanggan', [AdminServiceController::class, 'storePelanggan'])->name('pelanggan.store'); // tambah pelanggan
+        Route::delete('/pelanggan/{id}', [AdminServiceController::class, 'destroyPelanggan'])->name('pelanggan.destroy'); // hapus pelanggan
 
         // AJAX: Total pendapatan realtime
         Route::get('/total-pendapatan', [AdminServiceController::class, 'getTotalPendapatan'])
@@ -104,8 +106,7 @@ Route::middleware(['auth','role:customer'])
         Route::get('/layanan', [CustomerPageController::class, 'layanan'])->name('layanan');
 
         // Riwayat Pesanan
-        Route::get('/riwayat-pesanan', [CustomerPageController::class, 'riwayatPesanan'])
-            ->name('riwayat_pesanan');
+        Route::get('/riwayat-pesanan', [CustomerPageController::class, 'riwayatPesanan'])->name('riwayat_pesanan');
 
         // Detail Pesanan
         Route::get('/pesanan/{id}', [CustomerPageController::class, 'orderDetail'])->name('order.detail');

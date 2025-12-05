@@ -6,6 +6,7 @@ use App\Models\LaundryService;
 use App\Models\Order;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
 
 class AdminServiceController extends Controller
 {
@@ -14,24 +15,15 @@ class AdminServiceController extends Controller
      */
     public function dashboard()
     {
-        // Statistik utama
         $totalLayanan   = LaundryService::count();
         $totalPesanan   = Order::count();
         $totalPelanggan = User::where('role', 'customer')->count();
 
-        // Pelanggan aktif = customer yang pernah melakukan pesanan
         $pelangganAktif = Order::distinct('users_id')->count('users_id');
-
-        // Total pendapatan hanya pesanan selesai
         $totalPendapatan = Order::where('status_pesanan', 'selesai')->sum('total_harga');
-
-        // Pesanan baru (menunggu penjemputan)
         $pesananBaru = Order::where('status_pesanan', 'menunggu_penjemputan')->count();
-
-        // Pesanan selesai
         $pesananSelesai = Order::where('status_pesanan', 'selesai')->count();
 
-        // Pesanan terbaru (ambil 5 terakhir, relasi user)
         $pesananTerbaru = Order::with('user')
             ->orderBy('created_at', 'desc')
             ->limit(5)
@@ -51,7 +43,6 @@ class AdminServiceController extends Controller
 
     /**
      * AJAX: Ambil total pendapatan terbaru
-     * Ditambah respons JSON yang lengkap untuk realtime
      */
     public function getTotalPendapatan()
     {
@@ -167,5 +158,50 @@ class AdminServiceController extends Controller
         return redirect()
             ->route('admin.layanan')
             ->with('success', 'Layanan berhasil dihapus!');
+    }
+
+    /**
+     * Halaman pelanggan
+     */
+    public function pelanggan()
+    {
+        $pelanggan = User::where('role', 'customer')->get();
+        return view('admin.pelanggan', compact('pelanggan'));
+    }
+
+    /**
+     * Simpan pelanggan baru
+     */
+    public function storePelanggan(Request $request)
+    {
+        $validated = $request->validate([
+            'name'  => 'required|string|max:150',
+            'email' => 'required|email|unique:users,email',
+            'phone' => 'nullable|string|max:20',
+        ]);
+
+        // Password default: "password123"
+        $password = Hash::make('password123');
+
+        User::create([
+            'name'     => $validated['name'],
+            'email'    => $validated['email'],
+            'password' => $password,
+            'phone'    => $validated['phone'] ?? null,
+            'role'     => 'customer',
+        ]);
+
+        return redirect()->back()->with('success', 'Pelanggan berhasil ditambahkan! Password default: password123');
+    }
+
+    /**
+     * Hapus pelanggan
+     */
+    public function destroyPelanggan($id)
+    {
+        $pelanggan = User::where('role', 'customer')->findOrFail($id);
+        $pelanggan->delete();
+
+        return redirect()->back()->with('success', 'Pelanggan berhasil dihapus!');
     }
 }
