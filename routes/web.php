@@ -84,9 +84,11 @@ Route::middleware(['auth','role:admin'])
         Route::post('/pesanan/{order}/verify-payment', [OrderController::class, 'verifyPayment'])->name('orders.verify-payment');
 
         // Pelanggan
-        Route::get('/pelanggan', function () {
-            return view('admin.pelanggan');
-        })->name('pelanggan');
+        Route::get('/pelanggan', [AdminServiceController::class, 'pelanggan'])->name('pelanggan');
+
+        // AJAX: Total pendapatan realtime
+        Route::get('/total-pendapatan', [AdminServiceController::class, 'getTotalPendapatan'])
+            ->name('totalPendapatan');
     });
 
 // ==================== CUSTOMER ROUTES =====================
@@ -103,7 +105,7 @@ Route::middleware(['auth','role:customer'])
 
         // Riwayat Pesanan
         Route::get('/riwayat-pesanan', [CustomerPageController::class, 'riwayatPesanan'])
-            ->name('riwayat_pesanan'); // <-- pastikan pakai underscore agar sama dengan Blade
+            ->name('riwayat_pesanan');
 
         // Detail Pesanan
         Route::get('/pesanan/{id}', [CustomerPageController::class, 'orderDetail'])->name('order.detail');

@@ -15,16 +15,15 @@ class AdminServiceController extends Controller
     public function dashboard()
     {
         // Statistik utama
-        $totalLayanan     = LaundryService::count();
-        $totalPesanan     = Order::count();
-        $totalPelanggan   = User::where('role', 'customer')->count();
+        $totalLayanan   = LaundryService::count();
+        $totalPesanan   = Order::count();
+        $totalPelanggan = User::where('role', 'customer')->count();
 
         // Pelanggan aktif = customer yang pernah melakukan pesanan
         $pelangganAktif = Order::distinct('users_id')->count('users_id');
 
         // Total pendapatan hanya pesanan selesai
-        $totalPendapatan = Order::where('status_pesanan', 'selesai')
-            ->sum('total_harga');
+        $totalPendapatan = Order::where('status_pesanan', 'selesai')->sum('total_harga');
 
         // Pesanan baru (menunggu penjemputan)
         $pesananBaru = Order::where('status_pesanan', 'menunggu_penjemputan')->count();
@@ -32,7 +31,7 @@ class AdminServiceController extends Controller
         // Pesanan selesai
         $pesananSelesai = Order::where('status_pesanan', 'selesai')->count();
 
-        // Pesanan terbaru (ambil 5 terakhir, hanya relasi user)
+        // Pesanan terbaru (ambil 5 terakhir, relasi user)
         $pesananTerbaru = Order::with('user')
             ->orderBy('created_at', 'desc')
             ->limit(5)
@@ -51,6 +50,25 @@ class AdminServiceController extends Controller
     }
 
     /**
+     * AJAX: Ambil total pendapatan terbaru
+     * Ditambah respons JSON yang lengkap untuk realtime
+     */
+    public function getTotalPendapatan()
+    {
+        $totalPendapatan = Order::where('status_pesanan', 'selesai')->sum('total_harga');
+        $pesananBaru = Order::where('status_pesanan', 'menunggu_penjemputan')->count();
+        $pelangganAktif = Order::distinct('users_id')->count('users_id');
+        $pesananTerbaru = Order::with('user')->orderBy('created_at', 'desc')->limit(5)->get();
+
+        return response()->json([
+            'totalPendapatan' => $totalPendapatan,
+            'pesananBaru' => $pesananBaru,
+            'pelangganAktif' => $pelangganAktif,
+            'pesananTerbaru' => $pesananTerbaru,
+        ]);
+    }
+
+    /**
      * Halaman layanan (index)
      */
     public function index(Request $request)
@@ -63,9 +81,9 @@ class AdminServiceController extends Controller
             ->orderBy('created_at', 'desc')
             ->paginate(8);
 
-        $totalLayanan     = LaundryService::count();
-        $layananAktif     = LaundryService::where('is_active', true)->count();
-        $layananNonAktif  = LaundryService::where('is_active', false)->count();
+        $totalLayanan    = LaundryService::count();
+        $layananAktif    = LaundryService::where('is_active', true)->count();
+        $layananNonAktif = LaundryService::where('is_active', false)->count();
 
         return view('admin.layanan.index', compact(
             'totalLayanan',
@@ -76,13 +94,17 @@ class AdminServiceController extends Controller
         ));
     }
 
-    /** Form tambah layanan */
+    /**
+     * Form tambah layanan
+     */
     public function create()
     {
         return view('admin.layanan.create');
     }
 
-    /** Simpan layanan baru */
+    /**
+     * Simpan layanan baru
+     */
     public function store(Request $request)
     {
         $validated = $request->validate([
@@ -100,28 +122,32 @@ class AdminServiceController extends Controller
             ->with('success', 'Layanan berhasil ditambahkan!');
     }
 
-    /** Form edit layanan */
+    /**
+     * Form edit layanan
+     */
     public function edit($id)
     {
         $service = LaundryService::findOrFail($id);
         return view('admin.layanan.edit', compact('service'));
     }
 
-    /** Update layanan */
+    /**
+     * Update layanan
+     */
     public function update(Request $request, $id)
     {
         $service = LaundryService::findOrFail($id);
 
-        $request->validate([
+        $validated = $request->validate([
             'nama_layanan' => "required|string|max:150|unique:laundry_services,nama_layanan,{$id}",
             'harga'        => 'required|numeric|min:0',
             'deskripsi'    => 'nullable|string|max:500',
         ]);
 
         $service->update([
-            'nama_layanan' => $request->nama_layanan,
-            'harga'        => $request->harga,
-            'deskripsi'    => $request->deskripsi,
+            'nama_layanan' => $validated['nama_layanan'],
+            'harga'        => $validated['harga'],
+            'deskripsi'    => $validated['deskripsi'],
             'is_active'    => $request->has('is_active') ? true : false,
         ]);
 
@@ -130,7 +156,9 @@ class AdminServiceController extends Controller
             ->with('success', 'Layanan berhasil diperbarui!');
     }
 
-    /** Hapus layanan */
+    /**
+     * Hapus layanan
+     */
     public function destroy($id)
     {
         $service = LaundryService::findOrFail($id);

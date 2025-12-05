@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard Admin - LaundryKu</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
         body { font-family: 'Inter', sans-serif; }
@@ -45,7 +46,7 @@
                     <div class="flex justify-between items-start">
                         <div>
                             <p class="text-xs font-medium text-gray-500 uppercase">Total Pendapatan</p>
-                            <h3 class="text-2xl font-bold text-gray-800 mt-1">
+                            <h3 id="totalPendapatan" class="text-2xl font-bold text-gray-800 mt-1">
                                 Rp {{ number_format($totalPendapatan, 0, ',', '.') }}
                             </h3>
                         </div>
@@ -150,6 +151,23 @@
         </main>
     </div>
 </div>
+
+<script>
+    // Fungsi update total pendapatan secara realtime
+    function updateTotalPendapatan() {
+        axios.get("{{ route('admin.totalPendapatan') }}")
+            .then(function(response) {
+                const total = response.data.total;
+                document.getElementById('totalPendapatan').innerText = 'Rp ' + new Intl.NumberFormat('id-ID').format(total);
+            })
+            .catch(function(error) {
+                console.error('Gagal mengambil total pendapatan:', error);
+            });
+    }
+
+    // Update setiap 5 detik
+    setInterval(updateTotalPendapatan, 5000);
+</script>
 
 </body>
 </html>
