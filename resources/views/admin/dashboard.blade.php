@@ -15,32 +15,43 @@
 
 <div class="flex h-screen overflow-hidden">
 
+    {{-- SIDEBAR --}}
     @include('includes.sidebar')
 
+    {{-- MAIN CONTENT --}}
     <div class="relative flex flex-col flex-1 overflow-y-auto overflow-x-hidden">
         
+        {{-- HEADER --}}
         <header class="bg-white border-b border-gray-200 sticky top-0 z-30">
             <div class="flex items-center justify-between px-6 py-3">
+
+                {{-- SEARCH --}}
                 <div class="flex items-center bg-gray-100 rounded-lg px-4 py-2 w-64">
                     <svg class="w-5 h-5 text-gray-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
                     </svg>
-                    <input type="text" placeholder="Cari..." class="bg-transparent border-none focus:outline-none text-sm w-full">
+                    <input id="searchInput" type="text" placeholder="Cari..."
+                        class="bg-transparent border-none focus:outline-none text-sm w-full"
+                        onkeyup="filterOrdersTable()">
                 </div>
 
+                {{-- USER --}}
                 <div class="flex items-center space-x-2">
                     <img src="https://ui-avatars.com/api/?name=Admin&background=0D8ABC&color=fff" class="w-8 h-8 rounded-full">
                     <span class="text-sm font-medium text-gray-700">Admin</span>
                 </div>
+
             </div>
         </header>
 
+        {{-- MAIN --}}
         <main class="w-full flex-grow p-6">
             <h1 class="text-3xl font-bold text-gray-800 mb-6">Dashboard</h1>
 
-            <!-- CARD SECTION -->
+            {{-- CARD SECTION --}}
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-                
+
                 <!-- Total Pendapatan -->
                 <div class="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
                     <div class="flex justify-between items-start">
@@ -95,14 +106,14 @@
 
             </div>
 
-            <!-- PESANAN TERBARU -->
+            {{-- PESANAN TERBARU --}}
             <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
                 <div class="px-6 py-4 border-b border-gray-100">
                     <h3 class="font-semibold text-gray-800">Pesanan Terbaru</h3>
                 </div>
 
                 <div class="overflow-x-auto">
-                    <table class="w-full text-sm text-left text-gray-500">
+                    <table class="w-full text-sm text-left text-gray-500" id="ordersTable">
                         <thead class="text-xs text-gray-700 uppercase bg-gray-50">
                             <tr>
                                 <th class="px-6 py-3">ID Pesanan</th>
@@ -112,25 +123,19 @@
                                 <th class="px-6 py-3">Total</th>
                             </tr>
                         </thead>
-
                         <tbody>
                             @forelse($pesananTerbaru as $order)
                             <tr class="bg-white border-b hover:bg-gray-50">
                                 <td class="px-6 py-4 font-medium text-gray-900">
                                     #{{ strtoupper(substr($order->id, 0, 8)) }}
                                 </td>
-
                                 <td class="px-6 py-4">{{ $order->user->name ?? '-' }}</td>
-
-                                <!-- Karena tidak ada relasi service -->
-                                <td class="px-6 py-4">-</td>
-
+                                <td class="px-6 py-4">-</td> <!-- Placeholder karena tidak ada relasi service -->
                                 <td class="px-6 py-4">
                                     <span class="bg-blue-100 text-blue-800 text-xs font-medium px-2.5 py-0.5 rounded">
                                         {{ $order->status_pesanan }}
                                     </span>
                                 </td>
-
                                 <td class="px-6 py-4">
                                     Rp {{ number_format($order->total_harga, 0, ',', '.') }}
                                 </td>
@@ -143,7 +148,6 @@
                             </tr>
                             @endforelse
                         </tbody>
-
                     </table>
                 </div>
             </div>
@@ -152,21 +156,30 @@
     </div>
 </div>
 
+{{-- SCRIPT --}}
 <script>
-    // Fungsi update total pendapatan secara realtime
+    // Update total pendapatan setiap 5 detik
     function updateTotalPendapatan() {
         axios.get("{{ route('admin.totalPendapatan') }}")
             .then(function(response) {
-                const total = response.data.total;
+                const total = response.data.totalPendapatan;
                 document.getElementById('totalPendapatan').innerText = 'Rp ' + new Intl.NumberFormat('id-ID').format(total);
             })
             .catch(function(error) {
                 console.error('Gagal mengambil total pendapatan:', error);
             });
     }
-
-    // Update setiap 5 detik
     setInterval(updateTotalPendapatan, 5000);
+
+    // Filter tabel pesanan terbaru
+    function filterOrdersTable() {
+        const filter = document.getElementById("searchInput").value.toLowerCase();
+        const trs = document.querySelectorAll("#ordersTable tbody tr");
+        trs.forEach(tr => {
+            const text = tr.innerText.toLowerCase();
+            tr.style.display = text.includes(filter) ? "" : "none";
+        });
+    }
 </script>
 
 </body>
