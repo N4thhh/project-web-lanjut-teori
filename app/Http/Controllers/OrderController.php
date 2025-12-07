@@ -10,13 +10,57 @@ use Illuminate\Support\Facades\DB;
 
 class OrderController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $orders = Order::with(['user', 'payment'])
-            ->orderByDesc('created_at')
-            ->get();
+        $search = $request->input('search');
 
-        return view('admin.pesanan.index', compact('orders'));
+        // eager load sampai layanan
+        $ordersQuery = Order::with(['user', 'payment', 'orderDetails.laundryService'])
+            ->orderByDesc('created_at');
+
+        if (!empty($search)) {
+            $searchSlug = str_replace(' ', '_', strtolower($search));
+
+            $ordersQuery->where(function ($query) use ($search, $searchSlug) {
+                $query
+                    // ID pesanan
+                    ->where('id', 'like', "%{$search}%")
+
+                    // Nama pelanggan
+                    ->orWhereHas('user', function ($q) use ($search) {
+                        $q->where('name', 'like', "%{$search}%");
+                    })
+
+                    // Tanggal
+                    ->orWhere('created_at', 'like', "%{$search}%")
+
+                    // Status pesanan
+                    ->orWhere('status_pesanan', 'like', "%{$searchSlug}%")
+
+                    // Total harga
+                    ->orWhere('total_harga', 'like', "%{$search}%")
+
+                    // Status & jumlah pembayaran
+                    ->orWhereHas('payment', function ($q) use ($search, $searchSlug) {
+                        $q->where('status', 'like', "%{$searchSlug}%")
+                        ->orWhere('jumlah_bayar', 'like', "%{$search}%");
+                    })
+
+                    // 🔥 Nama layanan (dari LaundryService)
+                    // 🔥 Nama layanan (dari LaundryService)
+                    ->orWhereHas('orderDetails.laundryService', function ($q) use ($search) {
+                        $q->where('nama_layanan', 'like', "%{$search}%");
+                    });
+
+            });
+        }
+
+        $orders = $ordersQuery->get();
+
+        return view('admin.pesanan.index', [
+            'orders' => $orders,
+            'search' => $search,
+        ]);
     }
 
     public function show(Order $order)

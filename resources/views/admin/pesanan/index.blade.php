@@ -23,12 +23,19 @@
         {{-- HEADER SAMA PERSIS DENGAN DASHBOARD --}}
         <header class="bg-white border-b border-gray-200 sticky top-0 z-30">
             <div class="flex items-center justify-between px-6 py-3">
-                <div class="flex items-center bg-gray-100 rounded-lg px-4 py-2 w-64">
+                <form method="GET" class="flex items-center bg-gray-100 rounded-lg px-4 py-2 w-64">
                     <svg class="w-5 h-5 text-gray-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
                     </svg>
-                    <input type="text" placeholder="Cari..." class="bg-transparent border-none focus:outline-none text-sm w-full">
-                </div>
+                    <input
+                        type="text"
+                        name="search"
+                        value="{{ $search ?? '' }}"
+                        placeholder="Cari..."
+                        class="bg-transparent border-none focus:outline-none text-sm w-full"
+                    >
+                </form>
+
                 <div class="flex items-center space-x-4">
                     <div class="flex items-center space-x-2">
                         <img src="https://ui-avatars.com/api/?name=Admin&background=0D8ABC&color=fff" alt="Admin" class="w-8 h-8 rounded-full">
@@ -52,6 +59,7 @@
                             <tr>
                                 <th class="px-6 py-3">ID</th>
                                 <th class="px-6 py-3">Pelanggan</th>
+                                <th class="px-6 py-3">Layanan</th>   {{-- kolom baru --}}
                                 <th class="px-6 py-3">Tanggal</th>
                                 <th class="px-6 py-3">Status</th>
                                 <th class="px-6 py-3">Total</th>
@@ -72,6 +80,24 @@
                                         {{ $order->user->name ?? '-' }}
                                     </td>
 
+                                    {{-- LAYANAN --}}
+                                    <td class="px-6 py-4">
+                                        @php
+                                            $services = $order->orderDetails
+                                                ->map(function ($detail) {
+                                                    return $detail->laundryService->nama_layanan
+                                                        ?? $detail->laundryService->nama
+                                                        ?? $detail->laundryService->name
+                                                        ?? null;
+                                                })
+                                                ->filter()
+                                                ->unique()
+                                                ->implode(', ');
+                                        @endphp
+
+                                        {{ $services ?: '-' }}
+                                    </td>
+
                                     {{-- TANGGAL --}}
                                     <td class="px-6 py-4">
                                         {{ $order->created_at ? $order->created_at->format('d M Y H:i') : '-' }}
@@ -83,10 +109,10 @@
                                             $s = $order->status_pesanan ?? 'menunggu_penjemputan';
                                             $badgeClass = match($s) {
                                                 'menunggu_penjemputan' => 'bg-yellow-100 text-yellow-800',
-                                                'proses_penimbangan'   => 'bg-orange-100 text-orange-800', // Baru
-                                                'menunggu_pembayaran'  => 'bg-red-100 text-red-800',       // Baru (Penting!)
-                                                'proses_pencucian'     => 'bg-blue-100 text-blue-800',     // Baru
-                                                'pengiriman'           => 'bg-indigo-100 text-indigo-800', // Baru
+                                                'proses_penimbangan'   => 'bg-orange-100 text-orange-800',
+                                                'menunggu_pembayaran'  => 'bg-red-100 text-red-800',
+                                                'proses_pencucian'     => 'bg-blue-100 text-blue-800',
+                                                'pengiriman'           => 'bg-indigo-100 text-indigo-800',
                                                 'selesai'    => 'bg-green-100 text-green-800',
                                                 'diambil'    => 'bg-purple-100 text-purple-800',
                                                 'dibatalkan' => 'bg-gray-200 text-gray-800',
@@ -127,7 +153,8 @@
                                 </tr>
                             @empty
                                 <tr>
-                                    <td colspan="7" class="px-6 py-4 text-center text-sm text-gray-500">
+                                    {{-- sekarang ada 8 kolom --}}
+                                    <td colspan="8" class="px-6 py-4 text-center text-sm text-gray-500">
                                         Belum ada pesanan.
                                     </td>
                                 </tr>
