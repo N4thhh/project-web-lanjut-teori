@@ -21,7 +21,6 @@
 
     {{-- MAIN CONTENT --}}
     <div class="relative flex flex-col flex-1 overflow-y-auto overflow-x-hidden">
-        
 
         {{-- HEADER --}}
         <header class="bg-white border-b border-gray-200 sticky top-0 z-30">
@@ -46,8 +45,6 @@
 
             </div>
         </header>
-
-
 
         {{-- MAIN --}}
         <main class="w-full flex-grow p-6">
@@ -110,7 +107,6 @@
 
             </div>
 
-
             {{-- PESANAN TERBARU --}}
             <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
                 <div class="px-6 py-4 border-b border-gray-100">
@@ -132,13 +128,18 @@
                         <tbody>
 
                         @php
+                            // WARNA STATUS (SAMA PERSIS DENGAN RIWAYAT PESANAN)
                             function statusColor($status) {
                                 return match(strtolower($status)) {
-                                    'selesai' => 'bg-green-100 text-green-700',
-                                    'menunggu penjemputan', 'menunggu penjeputan' => 'bg-yellow-100 text-yellow-700',
-                                    'sedang diproses', 'diproses' => 'bg-blue-100 text-blue-700',
-                                    'dibatalkan' => 'bg-red-100 text-red-700',
-                                    default => 'bg-gray-100 text-gray-700'
+                                    'menunggu_penjemputan' => 'bg-yellow-100 text-yellow-700',
+                                    'proses_penimbangan'   => 'bg-orange-100 text-orange-700',
+                                    'menunggu_pembayaran'  => 'bg-red-100 text-red-700',
+                                    'proses_pencucian'     => 'bg-blue-100 text-blue-700',
+                                    'pengiriman'           => 'bg-indigo-100 text-indigo-700',
+                                    'selesai'              => 'bg-green-100 text-green-700',
+                                    'diambil'              => 'bg-purple-100 text-purple-700',
+                                    'dibatalkan'           => 'bg-gray-200 text-gray-700',
+                                    default                => 'bg-gray-100 text-gray-700'
                                 };
                             }
                         @endphp
@@ -182,8 +183,6 @@
         </main>
     </div>
 </div>
-
-
 
 {{-- SCRIPT --}}
 <script>
