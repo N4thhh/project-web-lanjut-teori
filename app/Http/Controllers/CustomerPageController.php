@@ -16,31 +16,25 @@ class CustomerPageController extends Controller
     public function dashboard()
     {
         $userId = Auth::id();
-
-        // Kolom status pesanan yang BENAR pada tabel orders
         $statusColumn = 'status_pesanan';
 
-        // Total pesanan
         $totalOrders = Order::where('users_id', $userId)->count();
 
-        // Pesanan aktif
         $activeOrders = Order::where('users_id', $userId)
             ->whereIn($statusColumn, [
                 'menunggu_penjemputan',
                 'diproses',
-                'siap-diambil',
+                'siap_diambil',
                 'dikirim'
             ])
             ->count();
 
-        // Pesanan selesai
         $completedOrders = Order::where('users_id', $userId)
             ->where($statusColumn, 'selesai')
             ->count();
 
-        // 3 pesanan terbaru
         $latestOrders = Order::where('users_id', $userId)
-            ->orderByDesc('created_at')
+            ->latest()
             ->take(3)
             ->get();
 
@@ -58,10 +52,10 @@ class CustomerPageController extends Controller
     // ==============================
     public function layanan()
     {
-        $layanan = LaundryService::all();
+        $layanan = LaundryService::orderBy('created_at', 'desc')->get();
 
         return view('customer.layanan', [
-            'services' => $layanan,
+            'services'   => $layanan,
             'activeMenu' => 'layanan'
         ]);
     }
@@ -71,24 +65,42 @@ class CustomerPageController extends Controller
     // ==============================
     public function riwayatPesanan()
     {
-        $orders = Order::with(['orderDetails.laundryService', 'payment'])
+        $orders = Order::with([
+                'orderDetails.laundryService',
+                'payment',
+            ])
             ->where('users_id', Auth::id())
             ->orderByDesc('created_at')
             ->get();
 
         return view('customer.riwayat_pesanan', [
-            'orders' => $orders,
+            'orders'     => $orders,
             'activeMenu' => 'riwayat_pesanan',
         ]);
     }
 
     // ==============================
-    //  DETAIL PESANAN (TAMBAHAN)
+    //  DETAIL PESANAN
     // ==============================
     public function orderDetail($id)
     {
-        // Tidak menampilkan detail — langsung arahkan ke riwayat
-        return redirect()->route('customer.riwayat_pesanan');
+        $order = Order::with([
+                'orderDetails.laundryService',
+                'payment',
+            ])
+            ->where('users_id', Auth::id())
+            ->where('id', $id)
+            ->first();
+
+        if (!$order) {
+            return redirect()->route('customer.riwayat_pesanan')
+                ->with('error', 'Pesanan tidak ditemukan.');
+        }
+
+        return view('customer.order_detail', [
+            'order'      => $order,
+            'activeMenu' => 'riwayat_pesanan'
+        ]);
     }
 
     // ==============================
@@ -96,15 +108,10 @@ class CustomerPageController extends Controller
     // ==============================
     public function profile()
     {
-        $user = Auth::user();
-
-        // Status akun → default aktif
-        $accountStatus = 'aktif';
-
         return view('customer.profile', [
-            'user'          => $user,
-            'accountStatus' => $accountStatus,
-            'activeMenu'    => 'profile',
+            'user'        => Auth::user(),
+            'accountStatus' => 'aktif',
+            'activeMenu'  => 'profile',
         ]);
     }
 

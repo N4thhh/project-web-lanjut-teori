@@ -96,17 +96,18 @@
                 @forelse ($latestOrders as $order)
                     <div class="flex flex-col sm:flex-row sm:items-center justify-between p-4">
                         <div>
+
                             <div class="font-semibold">
-                                <!-- MENAMPILKAN NAMA LAYANAN SESUAI PESANAN -->
-                                {{ optional($order->orderDetails->first())->laundryService->nama_layanan 
-    ?? optional($order->orderDetails->first())->nama_layanan 
-    ?? 'Tidak Ada Layanan' }}
+                                {{
+                                    optional($order->orderDetails->first())->laundryService->nama_layanan
+                                    ?? 'Tidak Ada Layanan'
+                                }}
                             </div>
 
                             <div class="text-[13px] text-gray-500 flex gap-4 mt-1">
                                 <span>🗓 {{ $order->created_at->format('Y-m-d') }}</span>
-                                <span>Rp {{ number_format($order->total_price, 0, ',', '.') }}</span>
-                                <span class="text-primary underline">#{{ $order->order_code }}</span>
+                                <span>Rp {{ number_format($order->total_harga, 0, ',', '.') }}</span>
+                                <span class="text-primary underline">#{{ $order->id }}</span>
                             </div>
                         </div>
 
@@ -114,18 +115,19 @@
 
                             @php
                                 $badgeColor = [
-                                    'pending'      => 'bg-yellow-100 text-yellow-700',
-                                    'proses'       => 'bg-blue-100 text-blue-700',
-                                    'siap diambil' => 'bg-indigo-100 text-indigo-700',
-                                    'selesai'      => 'bg-green-100 text-green-700',
-                                ][$order->status] ?? 'bg-gray-100 text-gray-600';
+                                    'menunggu_penjemputan' => 'bg-yellow-100 text-yellow-700',
+                                    'diproses'             => 'bg-blue-100 text-blue-700',
+                                    'siap_diambil'         => 'bg-indigo-100 text-indigo-700',
+                                    'selesai'              => 'bg-green-100 text-green-700',
+                                ][$order->status_pesanan] ?? 'bg-gray-100 text-gray-600';
                             @endphp
 
                             <span class="px-3 py-1 mb-2 rounded-full text-sm font-semibold {{ $badgeColor }}">
-                                {{ ucfirst($order->status) }}
+                                {{ ucfirst(str_replace('_',' ', $order->status_pesanan)) }}
                             </span>
 
-                            <a href="{{ route('customer.order.detail', $order->id) }}"
+                            <!-- PERBAIKAN DI SINI -->
+                            <a href="{{ route('customer.riwayat_pesanan') }}"
                                class="px-4 py-1 border border-primary text-primary rounded-lg text-sm hover:bg-primary hover:text-white transition">
                                 Detail
                             </a>
@@ -165,7 +167,6 @@
                     Pakaian kotor yang lama dibiarkan dapat meninggalkan noda membandel.
                 </p>
             </div>
-
         </div>
 
     </main>

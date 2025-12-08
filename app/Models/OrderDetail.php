@@ -19,12 +19,15 @@ class OrderDetail extends Model
         'order_id',
         'laundry_service_id',
         'harga_per_kg',
-        'berat',           // sudah diganti dari 'jumlah'
+        'berat',           
         'subtotal',
-        'harga_satuan',    // sudah ditambahkan
-        'keterangan'       // sudah ditambahkan
+        'harga_satuan',
+        'keterangan'
     ];
 
+    /**
+     * Generate UUID automatically when creating a new record
+     */
     protected static function boot()
     {
         parent::boot();
@@ -36,15 +39,20 @@ class OrderDetail extends Model
         });
     }
 
+    /**
+     * Relasi ke layanan laundry
+     * (Setiap detail pesanan punya 1 layanan)
+     */
     public function laundryService()
     {
-        // relasi benar (belongsTo)
         return $this->belongsTo(LaundryService::class, 'laundry_service_id', 'id');
     }
 
+    /**
+     * Relasi ke Order Induk
+     */
     public function order()
     {
-        // relasi benar (belongsTo)
         return $this->belongsTo(Order::class, 'order_id', 'id');
     }
 }
