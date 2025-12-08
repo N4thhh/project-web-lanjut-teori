@@ -7,6 +7,8 @@ use App\Models\Order;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 
 class AdminServiceController extends Controller
 {
@@ -213,5 +215,50 @@ class AdminServiceController extends Controller
         $pelanggan->delete();
 
         return redirect()->back()->with('success', 'Pelanggan berhasil dihapus!');
+    }
+
+    public function profile()
+    {
+        $user = Auth::user();
+
+        return view('admin.profile', [
+            'roleLabel' => 'Admin',
+            'user'        => Auth::user(),
+            'accountStatus' => 'aktif',
+            'activeMenu'  => 'profile',
+        ]);
+    }
+
+    /**
+     * Update profile admin (sesuai form customer.profile)
+     */
+    public function updateProfile(Request $request)
+    {
+        $user = Auth::user();
+
+        $validated = $request->validate([
+            'name'   => ['required', 'string', 'max:255'],
+            'email'  => ['required', 'email', 'max:255'],
+            'phone'  => ['nullable', 'string', 'max:30'],
+            'avatar' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:2048'],
+        ]);
+
+        $user->name = $validated['name'];
+        $user->email = $validated['email'];
+        $user->phone = $validated['phone'] ?? null;
+
+        if ($request->hasFile('avatar')) {
+            // hapus avatar lama kalau ada
+            if (!empty($user->avatar)) {
+                Storage::disk('public')->delete($user->avatar);
+            }
+
+            $path = $request->file('avatar')->store('avatars', 'public');
+            $user->avatar = $path;
+        }
+
+        $user->save();
+
+        return back()->with('success', 'Profil Admin berhasil diperbarui.');
     }
 }

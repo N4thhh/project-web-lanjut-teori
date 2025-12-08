@@ -5,12 +5,16 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Profil Admin - LaundryKu</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+    </style>
     <script>
         tailwind.config = {
             theme: {
                 extend: {
                     colors: {
-                        'primary': '#4FC3F7',
+                        primary: '#4FC3F7',
                         'primary-hover': '#25B6F5',
                     }
                 }
@@ -26,15 +30,16 @@
     @include('includes.sidebar')
 
     {{-- CONTENT --}}
-    <div class="relative flex flex-col flex-1 overflow-y-auto overflow-x-hidden lg:ml-80">
+    <div class="relative flex flex-col flex-1 overflow-y-auto overflow-x-hidden">
 
         {{-- MAIN CONTENT --}}
         <main class="w-full flex-grow p-6">
-            <div class="max-w-4xl mx-auto px-4 py-10 w-full">
+            {{-- jangan di-center, biar rapih kayak admin pages lain --}}
+            <div class="w-full max-w-6xl">
 
                 {{-- Judul --}}
                 <div class="mb-8">
-                    <h1 class="text-3xl font-bold text-gray-800">Profil Adminn</h1>
+                    <h1 class="text-3xl font-bold text-gray-800">Profil Admin</h1>
                     <p class="text-gray-500 mt-1">Kelola informasi akun dan data diri Admin.</p>
                 </div>
 
@@ -56,29 +61,32 @@
                     </div>
                 @endif
 
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
 
                     {{-- Kartu kiri --}}
-                    <div class="md:col-span-1 space-y-6">
-                        <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100 text-center">
-                            <div class="inline-block p-3 rounded-full bg-primary/10 mb-3 overflow-hidden">
-                                @if($user->avatar)
-                                    <img
-                                        src="{{ asset('storage/'.$user->avatar) }}"
-                                        class="h-16 w-16 rounded-full object-cover mx-auto"
-                                        alt="avatar"
-                                    >
-                                @else
-                                    <svg class="h-12 w-12 text-primary mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5">
-                                        <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" />
-                                    </svg>
-                                @endif
+                    <div class="lg:col-span-1 space-y-6">
+                        <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
+                            <div class="flex items-center gap-4">
+                                <div class="p-3 rounded-full bg-primary/10 overflow-hidden">
+                                    @if($user->avatar)
+                                        <img
+                                            src="{{ asset('storage/'.$user->avatar) }}"
+                                            class="h-16 w-16 rounded-full object-cover"
+                                            alt="avatar"
+                                        >
+                                    @else
+                                        <svg class="h-12 w-12 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" />
+                                        </svg>
+                                    @endif
+                                </div>
+                                <div>
+                                    <h2 class="text-lg font-bold text-gray-800">{{ $user->name }}</h2>
+                                    <p class="text-sm text-gray-500">Admin</p>
+                                </div>
                             </div>
 
-                            <h2 class="text-xl font-bold text-gray-800">{{ $user->name }}</h2>
-                            <p class="text-sm text-gray-500">Admin</p>
-
-                            <div class="mt-6 text-left space-y-3">
+                            <div class="mt-6 space-y-3">
                                 <div>
                                     <p class="text-xs text-gray-400 uppercase tracking-wider font-semibold">Bergabung</p>
                                     <p class="text-sm text-gray-700 font-medium">{{ $user->created_at->format('d M Y') }}</p>
@@ -100,7 +108,7 @@
                     </div>
 
                     {{-- Form kanan --}}
-                    <div class="md:col-span-2">
+                    <div class="lg:col-span-2">
                         <div class="bg-white p-8 rounded-xl shadow-sm border border-gray-100">
                             <div class="flex items-center mb-6 border-b pb-4">
                                 <svg class="w-5 h-5 text-primary mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">

@@ -26,7 +26,8 @@
                     <div class="flex items-center space-x-4">
                         <div class="flex items-center space-x-2">
                             <img src="https://ui-avatars.com/api/?name=Admin&background=0D8ABC&color=fff" alt="Admin" class="w-8 h-8 rounded-full">
-                            <span class="text-sm font-medium text-gray-700">Admin</span>
+                            <a href="{{ route('admin.profile') }}" class="text-sm font-medium text-gray-700 hover:text-gray-900"> Admin </a>
+
                         </div>
                     </div>
                 </div>

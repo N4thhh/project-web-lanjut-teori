@@ -64,6 +64,11 @@ Route::middleware(['auth','role:admin'])
     ->name('admin.')
     ->group(function () {
 
+        // profile
+        Route::get('/profile', [AdminServiceController::class, 'profile'])->name('profile');
+        Route::put('/profile', [AdminServiceController::class, 'updateProfile'])->name('profile.update');
+
+
         // Dashboard
         Route::get('/dashboard', [AdminServiceController::class, 'dashboard'])->name('dashboard');
 
