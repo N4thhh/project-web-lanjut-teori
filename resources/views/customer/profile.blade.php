@@ -5,6 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Profil Saya - LaundryKu</title>
     <script src="https://cdn.tailwindcss.com"></script>
+<<<<<<< HEAD
+=======
+    
+>>>>>>> 2a68adb2a4f1aae0a3c9efa73926eacbecb1d48a
     <script>
         tailwind.config = {
             theme: {
@@ -25,12 +29,20 @@
 
     {{-- Content --}}
     <main class="max-w-4xl mx-auto px-4 py-10 flex-grow w-full">
+<<<<<<< HEAD
+=======
+        
+>>>>>>> 2a68adb2a4f1aae0a3c9efa73926eacbecb1d48a
         {{-- Judul --}}
         <div class="mb-8">
             <h1 class="text-3xl font-bold text-gray-800">Profil Saya</h1>
             <p class="text-gray-500 mt-1">Kelola informasi akun dan data diri Anda.</p>
         </div>
 
+<<<<<<< HEAD
+=======
+        {{-- Notifikasi Sukses --}}
+>>>>>>> 2a68adb2a4f1aae0a3c9efa73926eacbecb1d48a
         @if(Session::has('success'))
             <div class="bg-green-100 border-l-4 border-green-500 text-green-700 p-4 rounded mb-6 shadow-sm" role="alert">
                 <p class="font-bold">Berhasil</p>
@@ -38,6 +50,10 @@
             </div>
         @endif
 
+<<<<<<< HEAD
+=======
+        {{-- Error Validasi --}}
+>>>>>>> 2a68adb2a4f1aae0a3c9efa73926eacbecb1d48a
         @if($errors->any())
             <div class="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 rounded mb-6 shadow-sm" role="alert">
                 <p class="font-bold">Terjadi Kesalahan</p>
@@ -51,6 +67,7 @@
 
         <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
 
+<<<<<<< HEAD
             <div class="md:col-span-1 space-y-6">
 
                 <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100 text-center">
@@ -72,6 +89,20 @@
                     <h2 class="text-xl font-bold text-gray-800">{{ $user->name }}</h2>
                     <p class="text-sm text-gray-500">Customer</p>
 
+=======
+            {{-- KIRI: Informasi Profil (Read-only) --}}
+            <div class="md:col-span-1 space-y-6">
+                
+                <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100 text-center">
+                    <div class="inline-block p-3 rounded-full bg-primary/10 mb-3">
+                        <svg class="h-12 w-12 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" />
+                        </svg>
+                    </div>
+                    <h2 class="text-xl font-bold text-gray-800">{{ $user->name }}</h2>
+                    <p class="text-sm text-gray-500">Customer</p>
+                    
+>>>>>>> 2a68adb2a4f1aae0a3c9efa73926eacbecb1d48a
                     <div class="mt-6 text-left space-y-3">
                         <div>
                             <p class="text-xs text-gray-400 uppercase tracking-wider font-semibold">Bergabung</p>
@@ -88,6 +119,10 @@
 
             </div>
 
+<<<<<<< HEAD
+=======
+            {{-- KANAN: Form Edit Profil --}}
+>>>>>>> 2a68adb2a4f1aae0a3c9efa73926eacbecb1d48a
             <div class="md:col-span-2">
                 <div class="bg-white p-8 rounded-xl shadow-sm border border-gray-100">
                     <div class="flex items-center mb-6 border-b pb-4">
@@ -95,6 +130,7 @@
                         <h2 class="text-xl font-semibold text-gray-800">Edit Informasi</h2>
                     </div>
 
+<<<<<<< HEAD
                     <form id="profileForm" action="{{ route('customer.profile.update') }}" method="POST" enctype="multipart/form-data">
                         @csrf
 
@@ -120,6 +156,16 @@
                                 class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary/50 focus:border-primary transition outline-none"
                                 placeholder="Masukkan nama lengkap"
                                 disabled>
+=======
+                    <form action="{{ route('customer.profile.update') }}" method="POST">
+                        @csrf
+
+                        <div class="mb-5">
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Nama Lengkap</label>
+                            <input type="text" name="name" value="{{ old('name', $user->name) }}"
+                                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary/50 focus:border-primary transition outline-none"
+                                placeholder="Masukkan nama lengkap">
+>>>>>>> 2a68adb2a4f1aae0a3c9efa73926eacbecb1d48a
                         </div>
 
                         <div class="mb-5">
@@ -130,8 +176,12 @@
                                 </span>
                                 <input type="email" name="email" value="{{ old('email', $user->email) }}"
                                     class="w-full pl-10 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary/50 focus:border-primary transition outline-none"
+<<<<<<< HEAD
                                     placeholder="nama@email.com"
                                     disabled>
+=======
+                                    placeholder="nama@email.com">
+>>>>>>> 2a68adb2a4f1aae0a3c9efa73926eacbecb1d48a
                             </div>
                         </div>
 
@@ -143,6 +193,7 @@
                                 </span>
                                 <input type="text" name="phone" value="{{ old('phone', $user->phone) }}"
                                     class="w-full pl-10 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary/50 focus:border-primary transition outline-none"
+<<<<<<< HEAD
                                     placeholder="0812..."
                                     disabled>
                             </div>
@@ -156,6 +207,15 @@
 
                             <button type="submit" id="saveBtn"
                                 class="bg-primary hover:bg-primary-hover text-white px-6 py-2.5 rounded-lg font-medium transition shadow-lg shadow-primary/30 flex items-center hidden">
+=======
+                                    placeholder="0812...">
+                            </div>
+                        </div>
+
+                        <div class="flex justify-end">
+                            <button type="submit"
+                                class="bg-primary hover:bg-primary-hover text-white px-6 py-2.5 rounded-lg font-medium transition shadow-lg shadow-primary/30 flex items-center">
+>>>>>>> 2a68adb2a4f1aae0a3c9efa73926eacbecb1d48a
                                 <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
                                 Simpan Perubahan
                             </button>
@@ -170,6 +230,7 @@
     {{-- Footer --}}
     @include('includes.footer')
 
+<<<<<<< HEAD
     <script>
       document.addEventListener('DOMContentLoaded', () => {
         const form = document.getElementById('profileForm');
@@ -199,3 +260,7 @@
 
 </body>
 </html>
+=======
+</body>
+</html>
+>>>>>>> 2a68adb2a4f1aae0a3c9efa73926eacbecb1d48a

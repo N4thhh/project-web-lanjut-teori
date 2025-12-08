@@ -29,7 +29,10 @@ class User extends Authenticatable
         'address',
         'otp',
         'email_verified_at',
+<<<<<<< HEAD
         'avatar',
+=======
+>>>>>>> 2a68adb2a4f1aae0a3c9efa73926eacbecb1d48a
     ];
 
     /**
