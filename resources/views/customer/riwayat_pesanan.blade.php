@@ -42,6 +42,7 @@
                     <tr>
                         <th class="px-4 py-3 text-left font-semibold text-gray-600">ID Pesanan</th>
                         <th class="px-4 py-3 text-left font-semibold text-gray-600">Tanggal</th>
+                        <th class="px-4 py-3 text-left font-semibold text-gray-600">Layanan</th>
                         <th class="px-4 py-3 text-left font-semibold text-gray-600">Status Pesanan</th>
                         <th class="px-4 py-3 text-left font-semibold text-gray-600">Total</th>
                         <th class="px-4 py-3 text-left font-semibold text-gray-600">Pembayaran</th>
@@ -78,12 +79,32 @@
                         @endphp
 
                         <tr class="hover:bg-primary/5 transition">
+                            {{-- ID Pesanan --}}
                             <td class="px-4 py-3 font-mono text-gray-800">
                                 #{{ substr($order->id, 0, 8) }}
                             </td>
+
+                            {{-- Layanan (kolom baru) --}}
+                            <td class="px-4 py-3 text-gray-700">
+                                @php
+                                    $layanans = $order->orderDetails
+                                        ->map(function ($detail) {
+                                            return $detail->laundryService->nama_layanan ?? 'Layanan';
+                                        })
+                                        ->unique()
+                                        ->values()
+                                        ->all();
+                                @endphp
+
+                                {{ $layanans ? implode(', ', $layanans) : '-' }}
+                            </td>
+
+                            {{-- Tanggal --}}
                             <td class="px-4 py-3 text-gray-700">
                                 {{ $order->created_at ? $order->created_at->format('d M Y H:i') : '-' }}
                             </td>
+
+                            {{-- Status, Total, Pembayaran dibiarkan persis seperti punyamu --}}
                             <td class="px-4 py-3">
                                 <span class="inline-flex px-2.5 py-1 rounded-full text-xs font-semibold {{ $statusClass }}">
                                     {{ $statusLabel }}
@@ -93,33 +114,28 @@
                                 Rp {{ number_format($order->total_harga ?? 0, 0, ',', '.') }}
                             </td>
                             <td class="px-4 py-3">
-                                {{-- LOGIKA TOMBOL BAYAR (Update Alur Baru) --}}
+                                {{-- blok logika tombol bayar PUNYAMU, jangan diubah --}}
                                 @if($order->status_pesanan === 'menunggu_pembayaran' && $order->status_pembayaran === 'belum_bayar')
-                                    
-                                    {{-- Tombol Muncul HANYA saat status 'menunggu_pembayaran' --}}
                                     <a href="{{ route('customer.payment.show', $order->id) }}" 
-                                       class="inline-block bg-blue-500 text-white px-3 py-1 rounded text-xs font-bold hover:bg-blue-600 transition shadow-sm">
-                                       Bayar Sekarang
+                                    class="inline-block bg-blue-500 text-white px-3 py-1 rounded text-xs font-bold hover:bg-blue-600 transition shadow-sm">
+                                    Bayar Sekarang
                                     </a>
-
                                 @elseif($order->status_pembayaran === 'sudah_bayar')
                                     <span class="text-xs text-blue-600 font-semibold bg-blue-50 px-2 py-1 rounded border border-blue-100">
                                         Menunggu Verifikasi
                                     </span>
-                                
                                 @elseif($order->status_pembayaran === 'lunas')
                                     <span class="inline-flex px-2.5 py-1 rounded-full text-xs font-semibold bg-green-100 text-green-700">
                                         Lunas
                                     </span>
-
                                 @else
-                                    {{-- Fallback (Belum bayar tapi belum waktunya bayar) --}}
                                     <span class="inline-flex px-2.5 py-1 rounded-full text-xs font-semibold bg-orange-100 text-orange-600">
                                         Belum Bayar
                                     </span>
                                 @endif
                             </td>
                         </tr>
+
                     @endforeach
                 </tbody>
             </table>
