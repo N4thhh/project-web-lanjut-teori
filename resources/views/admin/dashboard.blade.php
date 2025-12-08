@@ -11,6 +11,7 @@
         body { font-family: 'Inter', sans-serif; }
     </style>
 </head>
+
 <body class="bg-gray-50 text-gray-800">
 
 <div class="flex h-screen overflow-hidden">
@@ -21,6 +22,7 @@
     {{-- MAIN CONTENT --}}
     <div class="relative flex flex-col flex-1 overflow-y-auto overflow-x-hidden">
         
+
         {{-- HEADER --}}
         <header class="bg-white border-b border-gray-200 sticky top-0 z-30">
             <div class="flex items-center justify-between px-6 py-3">
@@ -29,11 +31,11 @@
                 <div class="flex items-center bg-gray-100 rounded-lg px-4 py-2 w-64">
                     <svg class="w-5 h-5 text-gray-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                              d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
                     </svg>
                     <input id="searchInput" type="text" placeholder="Cari..."
-                        class="bg-transparent border-none focus:outline-none text-sm w-full"
-                        onkeyup="filterOrdersTable()">
+                           class="bg-transparent border-none focus:outline-none text-sm w-full"
+                           onkeyup="filterOrdersTable()">
                 </div>
 
                 {{-- USER --}}
@@ -44,6 +46,8 @@
 
             </div>
         </header>
+
+
 
         {{-- MAIN --}}
         <main class="w-full flex-grow p-6">
@@ -64,7 +68,7 @@
                         <div class="p-2 bg-green-50 rounded-lg">
                             <svg class="w-6 h-6 text-green-500" fill="none" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1">
+                                      d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1">
                                 </path>
                             </svg>
                         </div>
@@ -81,7 +85,7 @@
                         <div class="p-2 bg-blue-50 rounded-lg">
                             <svg class="w-6 h-6 text-blue-500" fill="none" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path>
+                                      d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path>
                             </svg>
                         </div>
                     </div>
@@ -95,16 +99,17 @@
                             <h3 class="text-2xl font-bold text-gray-800 mt-1">{{ $pelangganAktif }}</h3>
                         </div>
                         <div class="p-2 bg-purple-50 rounded-lg">
-                            <svg class="w-6 h-6 text-purple-500" fill="none" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z">
-                                </path>
+                            <svg class="w-6 h-6 text-purple-500" xmlns="http://www.w3.org/2000/svg"
+                                 viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M12 12a4 4 0 1 0-4-4 4 4 0 0 0 4 4z" />
+                                <path d="M4 20a8 8 0 1 1 16 0z" />
                             </svg>
                         </div>
                     </div>
                 </div>
 
             </div>
+
 
             {{-- PESANAN TERBARU --}}
             <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
@@ -123,31 +128,53 @@
                                 <th class="px-6 py-3">Total</th>
                             </tr>
                         </thead>
+
                         <tbody>
-                            @forelse($pesananTerbaru as $order)
+
+                        @php
+                            function statusColor($status) {
+                                return match(strtolower($status)) {
+                                    'selesai' => 'bg-green-100 text-green-700',
+                                    'menunggu penjemputan', 'menunggu penjeputan' => 'bg-yellow-100 text-yellow-700',
+                                    'sedang diproses', 'diproses' => 'bg-blue-100 text-blue-700',
+                                    'dibatalkan' => 'bg-red-100 text-red-700',
+                                    default => 'bg-gray-100 text-gray-700'
+                                };
+                            }
+                        @endphp
+
+                        @forelse($pesananTerbaru as $order)
                             <tr class="bg-white border-b hover:bg-gray-50">
                                 <td class="px-6 py-4 font-medium text-gray-900">
                                     #{{ strtoupper(substr($order->id, 0, 8)) }}
                                 </td>
+
                                 <td class="px-6 py-4">{{ $order->user->name ?? '-' }}</td>
-                                <td class="px-6 py-4">-</td> <!-- Placeholder karena tidak ada relasi service -->
+
                                 <td class="px-6 py-4">
-                                    <span class="bg-blue-100 text-blue-800 text-xs font-medium px-2.5 py-0.5 rounded">
+                                    {{ $order->orderDetails->first()->laundryService->nama_layanan ?? '-' }}
+                                </td>
+
+                                <td class="px-6 py-4">
+                                    <span class="text-xs font-medium px-2.5 py-1 rounded {{ statusColor($order->status_pesanan) }}">
                                         {{ $order->status_pesanan }}
                                     </span>
                                 </td>
+
                                 <td class="px-6 py-4">
                                     Rp {{ number_format($order->total_harga, 0, ',', '.') }}
                                 </td>
                             </tr>
-                            @empty
+
+                        @empty
                             <tr>
                                 <td colspan="5" class="text-center py-4 text-gray-500">
                                     Belum ada pesanan.
                                 </td>
                             </tr>
-                            @endforelse
+                        @endforelse
                         </tbody>
+
                     </table>
                 </div>
             </div>
@@ -156,14 +183,16 @@
     </div>
 </div>
 
+
+
 {{-- SCRIPT --}}
 <script>
-    // Update total pendapatan setiap 5 detik
     function updateTotalPendapatan() {
         axios.get("{{ route('admin.totalPendapatan') }}")
             .then(function(response) {
                 const total = response.data.totalPendapatan;
-                document.getElementById('totalPendapatan').innerText = 'Rp ' + new Intl.NumberFormat('id-ID').format(total);
+                document.getElementById('totalPendapatan').innerText =
+                    'Rp ' + new Intl.NumberFormat('id-ID').format(total);
             })
             .catch(function(error) {
                 console.error('Gagal mengambil total pendapatan:', error);
@@ -171,7 +200,6 @@
     }
     setInterval(updateTotalPendapatan, 5000);
 
-    // Filter tabel pesanan terbaru
     function filterOrdersTable() {
         const filter = document.getElementById("searchInput").value.toLowerCase();
         const trs = document.querySelectorAll("#ordersTable tbody tr");

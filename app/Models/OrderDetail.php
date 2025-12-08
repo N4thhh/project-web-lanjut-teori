@@ -19,10 +19,10 @@ class OrderDetail extends Model
         'order_id',
         'laundry_service_id',
         'harga_per_kg',
-        'berat',           // CHANGED from 'jumlah' to 'berat'
+        'berat',           // sudah diganti dari 'jumlah'
         'subtotal',
-        'harga_satuan',    // Added from migration
-        'keterangan'       // Added from migration
+        'harga_satuan',    // sudah ditambahkan
+        'keterangan'       // sudah ditambahkan
     ];
 
     protected static function boot()
@@ -38,11 +38,13 @@ class OrderDetail extends Model
 
     public function laundryService()
     {
-        return $this->belongsTo(LaundryService::class);
+        // relasi benar (belongsTo)
+        return $this->belongsTo(LaundryService::class, 'laundry_service_id', 'id');
     }
 
     public function order()
     {
-        return $this->belongsTo(Order::class);
+        // relasi benar (belongsTo)
+        return $this->belongsTo(Order::class, 'order_id', 'id');
     }
 }

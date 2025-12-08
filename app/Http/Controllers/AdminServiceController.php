@@ -15,14 +15,13 @@ class AdminServiceController extends Controller
      */
     public function dashboard()
     {
-        $totalLayanan   = LaundryService::count();
-        $totalPesanan   = Order::count();
-        $totalPelanggan = User::where('role', 'customer')->count();
-
-        $pelangganAktif = Order::distinct('users_id')->count('users_id');
-        $totalPendapatan = Order::where('status_pesanan', 'selesai')->sum('total_harga');
-        $pesananBaru = Order::where('status_pesanan', 'menunggu_penjemputan')->count();
-        $pesananSelesai = Order::where('status_pesanan', 'selesai')->count();
+        $totalLayanan     = LaundryService::count();
+        $totalPesanan     = Order::count();
+        $totalPelanggan   = User::where('role', 'customer')->count();
+        $pelangganAktif   = Order::distinct('users_id')->count('users_id');
+        $totalPendapatan  = Order::where('status_pesanan', 'selesai')->sum('total_harga');
+        $pesananBaru      = Order::where('status_pesanan', 'menunggu_penjemputan')->count();
+        $pesananSelesai   = Order::where('status_pesanan', 'selesai')->count();
 
         $pesananTerbaru = Order::with('user')
             ->orderBy('created_at', 'desc')
@@ -42,25 +41,20 @@ class AdminServiceController extends Controller
     }
 
     /**
-     * AJAX: Ambil total pendapatan terbaru
+     * AJAX DASHBOARD UPDATE
      */
     public function getTotalPendapatan()
     {
-        $totalPendapatan = Order::where('status_pesanan', 'selesai')->sum('total_harga');
-        $pesananBaru = Order::where('status_pesanan', 'menunggu_penjemputan')->count();
-        $pelangganAktif = Order::distinct('users_id')->count('users_id');
-        $pesananTerbaru = Order::with('user')->orderBy('created_at', 'desc')->limit(5)->get();
-
         return response()->json([
-            'totalPendapatan' => $totalPendapatan,
-            'pesananBaru' => $pesananBaru,
-            'pelangganAktif' => $pelangganAktif,
-            'pesananTerbaru' => $pesananTerbaru,
+            'totalPendapatan' => Order::where('status_pesanan', 'selesai')->sum('total_harga'),
+            'pesananBaru'     => Order::where('status_pesanan', 'menunggu_penjemputan')->count(),
+            'pelangganAktif'  => Order::distinct('users_id')->count('users_id'),
+            'pesananTerbaru'  => Order::with('user')->orderBy('created_at', 'desc')->limit(5)->get(),
         ]);
     }
 
     /**
-     * Halaman layanan (index)
+     * LIST LAYANAN
      */
     public function index(Request $request)
     {
@@ -69,38 +63,31 @@ class AdminServiceController extends Controller
         $services = LaundryService::when($search, function ($query) use ($search) {
                 $query->where('nama_layanan', 'like', "%{$search}%");
             })
-            ->orderBy('created_at', 'desc')
+            ->orderByDesc('created_at')
             ->paginate(8);
 
-        $totalLayanan    = LaundryService::count();
-        $layananAktif    = LaundryService::where('is_active', true)->count();
-        $layananNonAktif = LaundryService::where('is_active', false)->count();
-
-        return view('admin.layanan.index', compact(
-            'totalLayanan',
-            'layananAktif',
-            'layananNonAktif',
-            'services',
-            'search'
-        ));
+        return view('admin.layanan.index', [
+            'services'        => $services,
+            'search'          => $search,
+            'totalLayanan'    => LaundryService::count(),
+            'layananAktif'    => LaundryService::where('is_active', true)->count(),
+            'layananNonAktif' => LaundryService::where('is_active', false)->count(),
+        ]);
     }
 
     /**
-     * Form tambah layanan
+     * TAMBAH LAYANAN
      */
     public function create()
     {
         return view('admin.layanan.create');
     }
 
-    /**
-     * Simpan layanan baru
-     */
     public function store(Request $request)
     {
         $validated = $request->validate([
             'nama_layanan' => 'required|string|max:150|unique:laundry_services,nama_layanan',
-            'harga'        => 'required|numeric|min:0',
+            'harga'        => 'required|integer|min:1',
             'deskripsi'    => 'nullable|string|max:500',
         ]);
 
@@ -108,13 +95,12 @@ class AdminServiceController extends Controller
 
         LaundryService::create($validated);
 
-        return redirect()
-            ->route('admin.layanan')
+        return redirect()->route('admin.layanan')
             ->with('success', 'Layanan berhasil ditambahkan!');
     }
 
     /**
-     * Form edit layanan
+     * EDIT LAYANAN
      */
     public function edit($id)
     {
@@ -122,16 +108,13 @@ class AdminServiceController extends Controller
         return view('admin.layanan.edit', compact('service'));
     }
 
-    /**
-     * Update layanan
-     */
     public function update(Request $request, $id)
     {
         $service = LaundryService::findOrFail($id);
 
         $validated = $request->validate([
             'nama_layanan' => "required|string|max:150|unique:laundry_services,nama_layanan,{$id}",
-            'harga'        => 'required|numeric|min:0',
+            'harga'        => 'required|integer|min:1',
             'deskripsi'    => 'nullable|string|max:500',
         ]);
 
@@ -139,39 +122,56 @@ class AdminServiceController extends Controller
             'nama_layanan' => $validated['nama_layanan'],
             'harga'        => $validated['harga'],
             'deskripsi'    => $validated['deskripsi'],
-            'is_active'    => $request->has('is_active') ? true : false,
+            'is_active'    => $request->has('is_active'),
         ]);
 
-        return redirect()
-            ->route('admin.layanan')
+        return redirect()->route('admin.layanan')
             ->with('success', 'Layanan berhasil diperbarui!');
     }
 
     /**
-     * Hapus layanan
+     * HAPUS LAYANAN
      */
     public function destroy($id)
     {
         $service = LaundryService::findOrFail($id);
+
+        // Cegah menghapus layanan yang sudah dipakai order
+        if ($service->orderDetails()->count() > 0) {
+            return back()->with('error', 'Tidak dapat menghapus layanan yang sudah digunakan dalam pesanan!');
+        }
+
         $service->delete();
 
-        return redirect()
-            ->route('admin.layanan')
+        return redirect()->route('admin.layanan')
             ->with('success', 'Layanan berhasil dihapus!');
     }
 
     /**
-     * Halaman pelanggan
+     * TOGGLE AKTIF / NONAKTIF LAYANAN
      */
-    public function pelanggan()
+    public function toggleActive($id)
     {
-        $pelanggan = User::where('role', 'customer')->get();
-        return view('admin.pelanggan', compact('pelanggan'));
+        $service = LaundryService::findOrFail($id);
+        $service->update([
+            'is_active' => !$service->is_active,
+        ]);
+
+        return back()->with('success', 'Status layanan diperbarui!');
     }
 
     /**
-     * Simpan pelanggan baru
+     * PELANGGAN
      */
+    public function pelanggan()
+    {
+        $pelanggan = User::where('role', 'customer')
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        return view('admin.pelanggan', compact('pelanggan'));
+    }
+
     public function storePelanggan(Request $request)
     {
         $validated = $request->validate([
@@ -180,28 +180,22 @@ class AdminServiceController extends Controller
             'phone' => 'nullable|string|max:20',
         ]);
 
-        // Password default: "password123"
-        $password = Hash::make('password123');
-
         User::create([
             'name'     => $validated['name'],
             'email'    => $validated['email'],
-            'password' => $password,
-            'phone'    => $validated['phone'] ?? null,
+            'password' => Hash::make('password123'),
+            'phone'    => $validated['phone'],
             'role'     => 'customer',
         ]);
 
-        return redirect()->back()->with('success', 'Pelanggan berhasil ditambahkan! Password default: password123');
+        return back()->with('success', 'Pelanggan berhasil ditambahkan! Password default: password123');
     }
 
-    /**
-     * Hapus pelanggan
-     */
     public function destroyPelanggan($id)
     {
         $pelanggan = User::where('role', 'customer')->findOrFail($id);
         $pelanggan->delete();
 
-        return redirect()->back()->with('success', 'Pelanggan berhasil dihapus!');
+        return back()->with('success', 'Pelanggan berhasil dihapus!');
     }
 }
