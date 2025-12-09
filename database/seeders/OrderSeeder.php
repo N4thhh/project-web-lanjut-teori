@@ -30,14 +30,6 @@ class OrderSeeder extends Seeder
             return;
         }
 
-        Order::create([
-            'users_id'          => $customer->id,
-            'alamat'            => 'Jl. Contoh No. 1 (Pesanan Baru)',
-            'status_pesanan'    => 'menunggu_penjemputan',
-            'status_pembayaran' => 'belum_bayar',
-            'total_harga'       => 0,
-        ]);
-
         $order2 = Order::create([
             'users_id'          => $customer->id,
             'alamat'            => 'Jl. Contoh No. 2 (Siap Bayar)',
