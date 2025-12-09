@@ -1,4 +1,14 @@
 <aside class="w-64 bg-white border-r border-gray-200 hidden md:flex flex-col">
+
+    @php
+        $admin = Auth::user();
+        $adminName = $admin->name ?? 'Admin Laundry';
+        $adminEmail = $admin->email ?? 'admin@laundryku.com';
+        $adminAvatar = $admin && $admin->avatar
+            ? asset('storage/'.$admin->avatar)
+            : 'https://ui-avatars.com/api/?name='.urlencode($adminName).'&background=0D8ABC&color=fff';
+    @endphp
+
     <div class="h-16 flex items-center justify-center border-b border-gray-200">
         <div class="flex items-center space-x-2">
             <img src="{{ asset('images/Logo.png') }}" alt="Logo" class="w-8 h-8">
@@ -43,7 +53,6 @@
                 </a>
             </li>
 
-            <!-- DIBENERIN DI SINI -->
             <li>
                 <a href="{{ route('admin.pelanggan') }}" 
                    class="flex items-center px-6 py-3 transition-colors duration-200 
@@ -60,10 +69,14 @@
 
     <div class="border-t border-gray-200 p-4">
         <div class="flex items-center space-x-3 mb-4">
-            <img src="https://ui-avatars.com/api/?name=Admin&background=0D8ABC&color=fff" alt="Admin" class="w-10 h-10 rounded-full">
+            <img
+                src="{{ $adminAvatar }}"
+                alt="{{ $adminName }}"
+                class="w-10 h-10 rounded-full object-cover"
+            >
             <div>
-                <p class="text-sm font-medium text-gray-800">Admin Laundry</p>
-                <p class="text-xs text-gray-500">admin@laundryku.com</p>
+                <p class="text-sm font-medium text-gray-800">{{ $adminName }}</p>
+                <p class="text-xs text-gray-500">{{ $adminEmail }}</p>
             </div>
         </div>
         <a href="{{ route('logout') }}" class="flex items-center justify-center w-full px-4 py-2 text-sm font-medium text-red-600 bg-red-50 rounded-lg hover:bg-red-100 transition-colors duration-200">

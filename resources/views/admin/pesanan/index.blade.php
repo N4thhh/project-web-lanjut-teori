@@ -20,6 +20,14 @@
     {{-- BAGIAN KANAN --}}
     <div class="relative flex flex-col flex-1 overflow-y-auto overflow-x-hidden">
 
+        @php
+            $admin = Auth::user();
+            $adminName = $admin->name ?? 'Admin';
+            $adminAvatar = $admin && $admin->avatar
+                ? asset('storage/'.$admin->avatar)
+                : 'https://ui-avatars.com/api/?name='.urlencode($adminName).'&background=0D8ABC&color=fff';
+        @endphp
+
         {{-- HEADER SAMA PERSIS DENGAN DASHBOARD --}}
         <header class="bg-white border-b border-gray-200 sticky top-0 z-30">
             <div class="flex items-center justify-between px-6 py-3">
@@ -38,8 +46,15 @@
 
                 <div class="flex items-center space-x-4">
                     <div class="flex items-center space-x-2">
-                        <img src="https://ui-avatars.com/api/?name=Admin&background=0D8ABC&color=fff" alt="Admin" class="w-8 h-8 rounded-full">
-                        <span class="text-sm font-medium text-gray-700">Admin</span>
+                        <img
+                            src="{{ $adminAvatar }}"
+                            alt="{{ $adminName }}"
+                            class="w-8 h-8 rounded-full object-cover"
+                        >
+                        <a href="{{ route('admin.profile') }}"
+                           class="text-sm font-medium text-gray-700 hover:text-gray-900">
+                            {{ $adminName }}
+                        </a>
                     </div>
                 </div>
             </div>
