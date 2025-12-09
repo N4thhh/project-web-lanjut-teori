@@ -41,8 +41,8 @@
                 <thead class="bg-primary/5">
                     <tr>
                         <th class="px-4 py-3 text-left font-semibold text-gray-600">ID Pesanan</th>
-                        <th class="px-4 py-3 text-left font-semibold text-gray-600">Tanggal</th>
                         <th class="px-4 py-3 text-left font-semibold text-gray-600">Layanan</th>
+                        <th class="px-4 py-3 text-left font-semibold text-gray-600">Tanggal</th>
                         <th class="px-4 py-3 text-left font-semibold text-gray-600">Status Pesanan</th>
                         <th class="px-4 py-3 text-left font-semibold text-gray-600">Total</th>
                         <th class="px-4 py-3 text-left font-semibold text-gray-600">Pembayaran</th>
