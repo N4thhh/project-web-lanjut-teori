@@ -10,57 +10,13 @@ use Illuminate\Support\Facades\DB;
 
 class OrderController extends Controller
 {
-    public function index(Request $request)
+    public function index()
     {
-        $search = $request->input('search');
+        $orders = Order::with(['user', 'payment'])
+            ->orderByDesc('created_at')
+            ->get();
 
-        // eager load sampai layanan
-        $ordersQuery = Order::with(['user', 'payment', 'orderDetails.laundryService'])
-            ->orderByDesc('created_at');
-
-        if (!empty($search)) {
-            $searchSlug = str_replace(' ', '_', strtolower($search));
-
-            $ordersQuery->where(function ($query) use ($search, $searchSlug) {
-                $query
-                    // ID pesanan
-                    ->where('id', 'like', "%{$search}%")
-
-                    // Nama pelanggan
-                    ->orWhereHas('user', function ($q) use ($search) {
-                        $q->where('name', 'like', "%{$search}%");
-                    })
-
-                    // Tanggal
-                    ->orWhere('created_at', 'like', "%{$search}%")
-
-                    // Status pesanan
-                    ->orWhere('status_pesanan', 'like', "%{$searchSlug}%")
-
-                    // Total harga
-                    ->orWhere('total_harga', 'like', "%{$search}%")
-
-                    // Status & jumlah pembayaran
-                    ->orWhereHas('payment', function ($q) use ($search, $searchSlug) {
-                        $q->where('status', 'like', "%{$searchSlug}%")
-                        ->orWhere('jumlah_bayar', 'like', "%{$search}%");
-                    })
-
-                    // 🔥 Nama layanan (dari LaundryService)
-                    // 🔥 Nama layanan (dari LaundryService)
-                    ->orWhereHas('orderDetails.laundryService', function ($q) use ($search) {
-                        $q->where('nama_layanan', 'like', "%{$search}%");
-                    });
-
-            });
-        }
-
-        $orders = $ordersQuery->get();
-
-        return view('admin.pesanan.index', [
-            'orders' => $orders,
-            'search' => $search,
-        ]);
+        return view('admin.pesanan.index', compact('orders'));
     }
 
     public function show(Order $order)
@@ -77,14 +33,17 @@ class OrderController extends Controller
 
     public function update(Request $request, Order $order)
     {
+        // 1. Validasi Input
         $request->validate([
             'status' => 'required|string',
             'details.*.berat' => 'nullable|numeric|min:0',
         ]);
 
+        // 2. Ambil status lama (DB) dan baru (Form)
         $current = $order->status_pesanan ?? 'menunggu_penjemputan';
         $new     = $request->status;
 
+        // 3. Aturan Alur Status
         $allowedFlow = [
             'menunggu_penjemputan' => ['menunggu_penjemputan', 'proses_penimbangan', 'dibatalkan'],
             'proses_penimbangan'   => ['proses_penimbangan', 'menunggu_pembayaran', 'dibatalkan'],
@@ -94,6 +53,7 @@ class OrderController extends Controller
             'selesai'              => ['selesai', 'diambil'],
             'diambil'              => ['diambil'],
             'dibatalkan'           => ['dibatalkan'],
+            // Fallback (Data Lama)
             'pending' => ['menunggu_penjemputan', 'proses_penimbangan', 'dibatalkan'],
             'proses'  => ['proses_penimbangan', 'menunggu_pembayaran'],
         ];
@@ -109,6 +69,36 @@ class OrderController extends Controller
             return back()
                 ->withErrors([
                     'status' => "Status tidak bisa diubah dari '$currText' ke '$newText'.",
+                ])
+                ->withInput();
+        }
+
+        $estimasiTotal = 0;
+        if ($request->has('details')) {
+            foreach ($request->input('details') as $detailId => $detailData) {
+                $detail = $order->orderDetails()->whereKey($detailId)->first();
+                if ($detail) {
+                    $beratInput = $detailData['berat'] ?? 0;
+                    $hargaSatuan = $detail->harga_satuan ?? 0;
+                    $estimasiTotal += ($beratInput * $hargaSatuan);
+                }
+            }
+        } else {
+            $estimasiTotal = $order->total_harga;
+        }
+
+        $statusWajibBayar = [
+            'menunggu_pembayaran',
+            'proses_pencucian',
+            'pengiriman',
+            'selesai',
+            'diambil'
+        ];
+
+        if (in_array($new, $statusWajibBayar) && $estimasiTotal <= 0) {
+            return back()
+                ->withErrors([
+                    'status' => 'Gagal mengubah status! Berat cucian belum diinput. Silakan input berat terlebih dahulu.',
                 ])
                 ->withInput();
         }
@@ -147,7 +137,7 @@ class OrderController extends Controller
 
                 if (! $payment->exists) {
                     $payment->status = 'belum_bayar';
-                    $payment->metode_pembayaran = 'belum_dipilih'; 
+                    $payment->metode_pembayaran = 'belum_dipilih';
                 }
 
                 $payment->save();
@@ -182,6 +172,7 @@ class OrderController extends Controller
                 $totalHarga += $subtotal;
             }
 
+            // Update status otomatis ke 'menunggu_pembayaran'
             $order->update([
                 'total_harga' => $totalHarga,
                 'status_pesanan' => 'menunggu_pembayaran', 
